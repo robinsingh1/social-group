@@ -78,6 +78,13 @@ var Home = React.createClass({
             </div>
             <div className="col-md-offset-1 col-md-5">
               <Feed />
+              <div id="the_progress_bar">
+              <div className="progress progress-striped active">
+              <div className="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style={{width:"100%"}}>
+                <span className="sr-only">45% Complete</span>
+              </div>
+              </div>
+            </div> 
             </div>
             <div className="col-md-offset-1 col-md-3">
             </div>
@@ -169,6 +176,7 @@ var Feed = React.createClass({
         profile_pics.push(profile_pic)
 
       thiss.setState({posts: thiss.state.posts.concat(lol.data), profile_pics: profile_pics, next: lol.paging.next})
+      $('#the_progress_bar').hide()
       //console.log('set state')
       localStorage.loaded = true
     })
@@ -186,6 +194,7 @@ var Feed = React.createClass({
       if($(window).scrollTop() == $(document).height() - $(window).height()){
         console.log('load more stuff')
         thiss.loadMoreItems(thiss.state.next)
+        $('#the_progress_bar').show()
       }
     })
 
