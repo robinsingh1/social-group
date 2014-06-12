@@ -1,0 +1,39 @@
+    .listing{
+      padding-bottom:30px;
+    }
+    .display_pic{
+      display:inline-block;
+      float:left;
+    }
+    .text-title{
+      display:inline-block;
+      margin-left:13px;
+      font-weight: bold;
+      font-size: 15px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 330px;
+      overflow: hidden
+    }
+    .text-price{
+      margin-left:75px;
+      display:block;
+    }
+    .text-description{
+      margin-left:75px;
+      display:block;
+    }
+    .contact-btn{
+      padding: 1px !important;
+      margin-top: 2px !important;
+      width: 50px !important;
+      display: block !important;
+    }
+    .icon-cell{
+      vertical-align:middle !important;
+      color:black !important;
+    }
+    .ticon{
+      font-size: 20px;
+      color: lightgrey;
+    }
