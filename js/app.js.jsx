@@ -179,9 +179,11 @@ var Feed = React.createClass({
     localStorage.loaded = true
     $(document).scroll(function(){
       var scrollPercent = $(window).scrollTop() / ($(document).height() - $(window).height())
+      //console.log($(window).scrollTop() == $(document).height() - $(window).height())
 
-      if(scrollPercent > 0.750 && scrollPercent < 0.751){
+      //if(scrollPercent > 0.750 && scrollPercent < 0.752){
       //if(scrollPercent == 0.753){
+      if($(window).scrollTop() == $(document).height() - $(window).height()){
         console.log('load more stuff')
         thiss.loadMoreItems(thiss.state.next)
       }
