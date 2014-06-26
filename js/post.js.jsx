@@ -95,23 +95,24 @@ var Post = React.createClass({
     /* Display On Web Comments
           {show_likes}
           <CreateComment addComment={this.addComment}/>
+        <div className="panel-footer">
+          <a href="#" className="btn btn-primary" style={{width:'48%'}}><i className="fa fa-thumbs-up" />&nbsp;Like</a>
+          <a href="#" className="btn btn-primary" style={{width:'50%',float:'right'}}><i className="fa fa-comment" />&nbsp;Comment</a>
+        </div>
     */
 
     return (
       <div>
       <div className="panel panel-default">
-        <PostAuthor date={moment(post.created_time).format("MMMM Do [at] h:mm a")} author={post.from.name} pic={this.props.fb_profile_pic}/>
+        <PostAuthor date={moment(post.created_time).format("MMMM Do [at] h:mm a")} author={post.from.name} pic={localStorage.getItem(post.from.id)}/>
         <PostBody body={post.message} 
                   image={this.props.fb_profile_pic} 
                   postComment={this.postComment}
                   postLike={this.postLike}/>
         <ul className="list-group">
           {comments}
+          <CreateComment addComment={this.addComment}/>
         </ul>
-        <div className="panel-footer">
-          <a href="#" className="btn btn-primary" style={{width:'48%'}}><i className="fa fa-thumbs-up" />&nbsp;Like</a>
-          <a href="#" className="btn btn-primary" style={{width:'50%',float:'right'}}><i className="fa fa-comment" />&nbsp;Comment</a>
-        </div>
       </div>
       </div>
     );
@@ -152,7 +153,7 @@ var Comment = React.createClass({
           <div className="media" >
             <a href="#" style={{padding:'0',width:'34px',marginBottom:'0',marginTop:'2px'}} 
               className="pull-left thumbnail">
-              <img src={profile_pic} className="media-object" style={{borderRadius:'2px'}}/>
+              <img src={localStorage.getItem(comment.from.id) || profile_pic} className="media-object" style={{borderRadius:'2px'}}/>
             </a>
             <div className="media-body">
               <h5 className="media-heading" style={{display:'inline',fontSize:'12px'}}>
@@ -186,11 +187,12 @@ var PostAuthor = React.createClass({
     if(typeof author == "undefined")
       author = {}
 
+    profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
     return (
         <div className="panel-heading" style={{backgroundColor:'white',border:'0'}}>
           <div className="media" style={{height:'45px'}}>
             <a href="#" style={{padding:'0',width:'45px'}} className="pull-left thumbnail">
-              <img src={this.props.pic} className="media-object"/>
+              <img src={this.props.pic || profile_pic} className="media-object"/>
             </a>
             <div className="media-body">
               <h5 className="media-heading" style={{display:'inline'}}>

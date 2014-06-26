@@ -49,8 +49,7 @@ var NavBar = React.createClass({
         <span className="icon-bar"></span>
         </button>
         <a className="navbar-brand" href="#">
-        <i className="fa fa-home" />&nbsp;
-        Nextdoor</a>
+        <i className="fa fa-home" />&nbsp; NeighborsCircle</a>
         </div>
 
         <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -75,6 +74,7 @@ var Home = React.createClass({
         <div className="container" style={{width:'auto'}}>
           <div className="row">
             <div className="col-md-2">
+              <Categories />
             </div>
             <div className="col-md-offset-1 col-md-5">
               <Feed />
@@ -87,6 +87,7 @@ var Home = React.createClass({
             </div> 
             </div>
             <div className="col-md-offset-1 col-md-3">
+<MembersBox />
             </div>
             <div className="col-md-1">
             </div>
@@ -116,10 +117,7 @@ var Categories = React.createClass({
         <div className="panel-heading">
           Categories
         </div>
-          <ul className="list-group">
-            <a className="list-group-item">Classifieds</a>
-            <a className="list-group-item">{'Crime & Safety'}</a>
-            <a className="list-group-item">Free Items</a>
+          <ul className="list-group"> <a className="list-group-item">Classifieds</a> <a className="list-group-item">{'Crime & Safety'}</a> <a className="list-group-item">Free Items</a>
             <a className="list-group-item">General</a>
             <a className="list-group-item">{'Lost & Found'}</a>
             <a className="list-group-item">Recommendations</a>
@@ -183,6 +181,10 @@ var Feed = React.createClass({
   },
 
   componentDidMount: function(){
+    $('.navbar-toggle').css('width','40px')
+    $('.navbar-toggle').css('height','40px')
+    $('.navbar-toggle').html('<i class="fa fa-refresh" style="color:#777"></i>')
+
     thiss = this;
     localStorage.loaded = true
     $(document).scroll(function(){
@@ -198,20 +200,28 @@ var Feed = React.createClass({
       }
     })
 
+
+    $('.navbar-toggle').on('click', function(){
+      console.log('clicked')
+      location.reload();
+    });
+
     Parse.initialize("aIHDo506A6fdlZ7YZB6n93EZQeBvV8wBFsArgIYB", "wWQnUcWjA7ARW2s5n6zSfv52ypp1d7PmyMSoLxDh")
-  /*
+    access_token = "CAACEdEose0cBAEpDZCRU7Uz3B9bNPIqzoWcT8lI9KnZAghbYd7GNsDTpBjuU56wnpotmetYHqO6LDjp9d8yAZAhAPhLtgv4tZACMvkKeWIFj3Tk4iRPxifIwrk2PdZAHdULzL8iJThXPTYVBnDCOVefNx0KnFh69UF5H58AmDmhXzMXMcM9fKW9hqEdh2O7rkpO4gbqi1VgZDZD"
+
     $.ajax({
-      url: "https://api.parse.com/1/classes/Post?limit=20&include=user,comments,users_who_commented",
+      //url: "https://api.parse.com/1/classes/Post?limit=20&include=user,comments,users_who_commented",
+      url: "https://api.parse.com/1/classes/_User",
       headers:{"X-Parse-Application-Id": "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
        "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
       },
-      data:'order=-post_created_at_timestamp',
+      //data:'order=-post_created_at_timestamp',
       //data:'order=-updatedAt',
     }).success(function(lol) {
-      thiss.setState({posts: lol.results})
+      console.log(lol.results)
+      for(i=0;i<lol.results.length;i++)
+        localStorage.setItem(lol.results[i].fb_id+"", lol.results[i].fb_profile_pic)
     })
-  */
-    access_token = "CAACEdEose0cBAGP5f20PLef2p3j4LNaaMPeG5LAXaABgVzPJuBaZAx2IoIMvwDULjZC2EvJmZBLarMiybMA66JJXqZBCPEeSBI2RMwKspzcxS1eldhWM9XCZAJIZBrLN5RUjbppu0buEUDax8pPZCJ7SacL3K889X4dlVNZARZBUF4rcLkMA1DFZAuu2bUjEgYf69MgUFUtyJWYQZDZD"
     $.ajax({
       url: "https://graph.facebook.com/595943383784905/feed?access_token="+access_token
     }).success(function(lol) {
@@ -248,10 +258,12 @@ var Feed = React.createClass({
     }
     /*
      * Not In MVP
-        <createPost createPost={this.createPost}/>
+     *<createPost createPost={this.createPost}/>
+        
     */
     return (
       <div>
+        <createPost createPost={this.createPost}/>
         {posts}
       </div>
     )
@@ -369,6 +381,7 @@ var Workspace = Backbone.Router.extend({
     "request_membership" : "request_membership",
     "signup": "signup",
     "newsignup": "newsignup",
+    "offline": "offline",
   },
 
   main: function() {
@@ -398,6 +411,10 @@ var Workspace = Backbone.Router.extend({
 
   newsignup: function(){
     React.renderComponent(NewSignup(), document.getElementById('content'));
+  },
+
+  offline: function(){
+    React.renderComponent(Offline(), document.getElementById('content'));
   },
 
 
