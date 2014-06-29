@@ -53,7 +53,6 @@ var maps = React.createClass({
     return (
       <div id="the_map" style={{height:'400px'}}className="panel panel-default">
         <div className="panel-body">
-          lmao
         </div>
       </div>
     );

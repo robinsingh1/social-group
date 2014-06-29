@@ -1,8 +1,9 @@
 /** @jsx React.DOM */
 
-var ParsePost = React.createClass({
+var FacebookPost = React.createClass({
   getInitialState: function(){
-    var postKeys = [], commentKeys = [], p = this.props.post;
+    var postKeys = [], commentKeys = [];
+    p = this.props.post
 
     comments = (typeof p.comments == "undefined") ? [] : p.comments
     u = (typeof p.users_who_commented == "undefined") ? [] : p.users_who_commented
@@ -10,74 +11,31 @@ var ParsePost = React.createClass({
     return {comments: comments, users: u }
   },
 
-  makeid: function() {
-    var a = "", b = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < 5; i++ )
-        a += b.charAt(Math.floor(Math.random() * b.length));
-    return a;
-  },
-
-  addComment: function(blah, body){
-    var comments = this.state.comments, users = this.state.users;
-    console.log(comments)
+  addComment: function(utc_tstamp, body){
+    var comments = this.state.comments.data, users = this.state.users;
 
     new_comment = {
       comment_author_id : "Test Test",
       comment_body : body,
-      comment_date : new Date().getTime(),
+      comment_date : utc_tstamp,
       likes_link: "no_likes",
-      key: this.makeid(),
+      objectId: this.makeid(),
       user_likes: []
     }
 
     new_user = { }
-    if(body != "") {
-      comments.push(new_comment); users.push(new_user);
-      this.setState({comments: comments, users: users})
-    }
-
-    // Persist In Parse
-    /*
-    data = {
-      body   : body,
-      user : {
-        "__type"    : "Pointer",
-        "className" : "_User",
-        "objectId"  : "5lgpbcsu6c", //Parse.User.current
-      }, 
-      from : {
-        name : "Robin Singh"
-      },
-      message: body,
-      post_created_at:moment().format('MMMM Do YYYY, h:mm:ss a'),
-    }
-
-    console.log(data)
-
-    $.ajax({
-      url: "https://api.parse.com/1/classes/Post",
-      type: "POST",
-      dataType: "JSON",
-      contentType: "application/json",
-      headers : {
-        "X-Parse-Application-Id": "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
-       "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
-      },
-      data: JSON.stringify(data),
-    });
-    */
+    comments.push(new_comment); users.push(new_user);
+    this.setState({comments: comments, users: users})
   },
 
   commentLike: function(key){
-    console.log($(this.getDOMNode()).find())
-
+    console.log(key)
     comments = this.state.comments
     for(i=0;i<comments.length;i++)
       if(comments[i].objectId == key)
         comments[i].user_likes.push({})
         
-    //this.setState({comments: comments})
+    this.setState({comments: comments})
     // add user can only like something once logic
     // if liked add unlike
   },
@@ -87,56 +45,46 @@ var ParsePost = React.createClass({
   },
 
   postLike: function(e){
-    //console.log('post like')
-
-    text = $(this.getDOMNode()).find('#postLike').text()
-    if( text == 'Like')
-      $(this.getDOMNode()).find('#postLike').text('Unlike')
-    else
-      $(this.getDOMNode()).find('#postLike').text('Like')
-
+    console.log('post like')
     // get the key of specific post and modify user_likes
   },
 
 
   render: function(){
-    var post = this.props.post
+    post = this.props.post
     comment = { backgroundColor : '#f5f5f5' }
     show_likes = ""
 
-    comments = []
-    for(i=0;i<this.state.comments.length;i++){
-      comments.push(<Comment comment={this.state.comments[i]} 
-                             key={this.makeid()}
-                             commentLike={this.commentLike}
-                             users={this.state.users[i]}/>)
-    }
-    /* Display On Web Comments 
+    /*
     if(post.user_likes.length > 0)
       show_likes = <LikesAndSeens likes = {post.user_likes} />
+    */
 
-         {show_likes}
+    comments = []
+    if(typeof post.comments != "undefined")
+      for(i=0;i<post.comments.data.length;i++){
+        comments.push(<Comment comment={post.comments.data[i]} 
+                               commentLike={this.commentLike}
+                               users={this.state.users[i]}/>)
+      }
+    /* Display On Web Comments
+          {show_likes}
           <CreateComment addComment={this.addComment}/>
         <div className="panel-footer">
-          <a href="#" className="btn btn-primary" style={{width:'48%'}}>
-            <i className="fa fa-thumbs-up" />&nbsp;Like
-          </a>
-        <a href="#" className="btn btn-primary" style={{width:'50%',float:'right'}}>
-          <i className="fa fa-comment" />&nbsp;Comment
-        </a>
+          <a href="#" className="btn btn-primary" style={{width:'48%'}}><i className="fa fa-thumbs-up" />&nbsp;Like</a>
+          <a href="#" className="btn btn-primary" style={{width:'50%',float:'right'}}><i className="fa fa-comment" />&nbsp;Comment</a>
         </div>
     */
 
-    profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
-    tstamp = post.post_created_at_timestamp
-    tstamp = moment.unix(tstamp).format("MMMM Do [at] h:mm a")
+    profile_pic = localStorage.getItem(post.from.id)
     return (
       <div>
         <div className="panel panel-default">
-          <PostAuthor date={tstamp} 
-                      author={post.user} 
+          <PostAuthor date={moment(post.created_time).format("MMMM Do [at] h:mm a")} 
+                      author={post.from.name} 
                       pic={profile_pic}/>
-          <PostBody body={post.body} 
+          <PostBody body={post.message} 
+                    image={this.props.fb_profile_pic} 
                     postComment={this.postComment}
                     postLike={this.postLike}/>
           <ul className="list-group">
@@ -147,21 +95,24 @@ var ParsePost = React.createClass({
         </div>
       </div>
     );
+  },
+  componentDidMount: function(){
+    
   }
+
 });
 
 var Comment = React.createClass({
   render: function(){
     comment = this.props.comment
     commentStyle = { backgroundColor : '#f5f5f5' }
-    comment = (typeof comment == "undefined") ? {} : comment
+    if(typeof comment == "undefined")
+      comment = {}
 
     if(typeof comment.users_who_commented == "undefined")
       comment.users_who_commented = {}
 
-    formatted_date = moment.utc(comment.comment_date).format("MMMM Do [at] h:mm a")
-    console.log(formatted_date)
-
+    formatted_date = moment.unix(comment.comment_date).format("MMMM Do [at] h:mm a")
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
 
     
@@ -169,6 +120,7 @@ var Comment = React.createClass({
     if(comment.user_likes.length > 0)
       likes = <span><i className="fa fa-thumbs-up"/>{" "+comment.user_likes.length}</span>
     
+    console.log(comment)
     return (
         <li className="list-group-item" style={commentStyle}>
           <div className="media" >
@@ -178,14 +130,14 @@ var Comment = React.createClass({
             </a>
             <div className="media-body">
               <h5 className="media-heading" style={{display:'inline',fontSize:'12px'}}>
-                <a href="#">{comment.comment_author_id}</a>
+                <a href="#">{comment.from.name}</a>
               </h5>
-      <span style={{marginLeft:'10px',fontSize:'12px'}}>{comment.comment_body} </span>
+      <span style={{marginLeft:'10px',fontSize:'12px'}}>{comment.message} </span>
               <br/>
               <span style={{fontSize:'12px'}}><span className="text-muted" >
-              {formatted_date}
+              {moment(comment.created_time).format("MMMM Do [at] h:mm a")}
               </span>&nbsp;&nbsp;
-              <a href="#" onClick={this.commentLike} id="commentLike">Like</a>
+              <a href="#" onClick={this.commentLike}>Like</a>
               &nbsp; &nbsp;
               <a href="#" style={{textDecoration:'none'}}>{likes}</a>
               </span>
@@ -208,22 +160,28 @@ var PostAuthor = React.createClass({
     if(typeof author == "undefined")
       author = {}
 
-    author_name = author.first_name + " " + author.last_name
+    profile_pic = this.props.pic
+    console.log(typeof profile_pic)
+    if(typeof profile_pic == "undefined")
+      profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
+
+    profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
+
     return (
-  <div className="panel-heading" style={{backgroundColor:'white',border:'0'}}>
-    <div className="media" style={{height:'45px'}}>
-      <a href="#" style={{padding:'0',width:'45px'}} className="pull-left thumbnail">
-        <img src={this.props.pic} className="media-object"/>
-      </a>
-      <div className="media-body">
-        <h5 className="media-heading" style={{display:'inline'}}>
-        <a href="#">{author_name}</a>
-        </h5>
-        <br/>
-        <span className="text-muted" style={{fontSize:'12px'}}>{this.props.date}</span>
-      </div>
-    </div>
-  </div>
+        <div className="panel-heading" style={{backgroundColor:'white',border:'0'}}>
+          <div className="media" style={{height:'45px'}}>
+            <a href="#" style={{padding:'0',width:'45px'}} className="pull-left thumbnail">
+              <img src={profile_pic} className="media-object"/>
+            </a>
+            <div className="media-body">
+              <h5 className="media-heading" style={{display:'inline'}}>
+              <a href="#">{author}</a>
+              </h5>
+              <br/>
+              <span className="text-muted" style={{fontSize:'12px'}}>{this.props.date}</span>
+            </div>
+          </div>
+        </div>
     );
   }
 });
@@ -245,13 +203,12 @@ var PostBody = React.createClass({
         &nbsp;
         &nbsp;
         <a href="#" style={{fontSize:'12px'}} onClick={this.postComment}>Comment</a>
-        <a href="http://www.facebook.com" style={{textDecoration:'none',color:'black'}}>{this.props.body}</a>
   */
     return (
         <div className="panel-body" style={{paddingBottom:'10px'}}>
-        {this.props.body}
+        <a href="http://www.facebook.com" style={{textDecoration:'none',color:'black'}}>{this.props.body}</a>
         <div style={{paddingTop:'10px'}}>
-        <a href="#" id="postLike" style={{fontSize:'12px'}} onClick={this.postLike}>Like</a>
+        <a href="#" style={{fontSize:'12px'}} onClick={this.postLike}>Like</a>
         &nbsp;
         &nbsp;
         <a href="#" style={{fontSize:'12px'}} onClick={this.postComment}>Comment</a>
@@ -291,6 +248,16 @@ var LikesAndSeens = React.createClass({
   }
 });
 
+var CommentOne = React.createClass({
+  render: function(){
+    return (
+      <div>
+      </div>
+    )
+  }
+});
+
+
 var CreateComment = React.createClass({
   componentDidMount: function(){
     $(this.getDOMNode()).find('textarea').autosize()
@@ -301,30 +268,28 @@ var CreateComment = React.createClass({
       e.preventDefault()
       body = $(this.getDOMNode()).find('textarea').val()
       this.props.addComment(Date.now(), body)
-      $(this.getDOMNode()).find('textarea').val('')
-      $(this.getDOMNode()).find('textarea').focusout()
     }
   },
 
   render: function(){
     commentStyle = { backgroundColor : '#f5f5f5' }
     return (
-      <li className="list-group-item" style={commentStyle}>
-        <div className="media" >
-          <a href="#" style={{marginBottom:'0px',padding:'0',width:'34px'}} className="pull-left thumbnail">
-            <img src="https://pbs.twimg.com/profile_images/2103629538/twit.png" className="media-object" style={{borderRadius:'2px'}}/>
-          </a>
-          <div className="media-body" style={comment}>
-            <form>
-              <textarea type="text" className="form-control" 
-                onKeyPress={this.keyPress}
-                placeholder="Write a comment..."
-                rows="1"
-                style={{resize:'none'}} />
-            </form>
+        <li className="list-group-item" style={commentStyle}>
+          <div className="media" >
+            <a href="#" style={{marginBottom:'0px',padding:'0',width:'34px'}} className="pull-left thumbnail">
+              <img src="https://pbs.twimg.com/profile_images/2103629538/twit.png" className="media-object" style={{borderRadius:'2px'}}/>
+            </a>
+            <div className="media-body" style={comment}>
+              <form onSubmit={this.createComment}>
+                <textarea type="text" className="form-control" 
+                  onKeyPress={this.keyPress}
+                  placeholder="Write a comment..."
+                  rows="1"
+                  style={{resize:'none'}} />
+              </form>
+            </div>
           </div>
-        </div>
-      </li>
+        </li>
     );
   }
 });
@@ -375,7 +340,7 @@ var NewSignup = React.createClass({
   },
   fbLogin: function(e){
     e.preventDefault()
-    //console.log('fb login')
+    console.log('fb login')
     Parse.FacebookUtils.logIn(null, {
       success: function(user) {
         if (!user.existed()) {

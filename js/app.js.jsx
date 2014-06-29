@@ -66,17 +66,17 @@ var NavBar = React.createClass({
 
 var Home = React.createClass({
   render: function(){
-             //<Categories />
-            //<MembersBox />
+    //<Categories /> //<MembersBox />
+    // Show the name of the neighborhood
     return (
       <div>
         <NavBar />
         <div className="container" style={{width:'auto'}}>
           <div className="row">
             <div className="col-md-2">
-              <Categories />
+<Categories />
             </div>
-            <div className="col-md-offset-1 col-md-5">
+            <div className="col-md-offset-1 col-md-5 ">
               <Feed />
               <div id="the_progress_bar">
               <div className="progress progress-striped active">
@@ -154,83 +154,50 @@ var Feed = React.createClass({
   getInitialState: function(){
     return {posts: [] , profile_pics:[], next:""}
   },
-  
-  componentWillUpdate: function(){
-  },
-
-  componetDidUpdate: function(){
-  },
 
   loadMoreItems: function(paging_url){
     thiss = this;
-    //console.log('load more items')
-    $.ajax({
-      url: paging_url
-    }).success(function(the_lol) {
+    $.ajax({ url: paging_url })
+    .success(function(the_lol) {
       lol = the_lol
       profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
       profile_pics = []
-      for(i=0;i<lol.data.length;i++)
-        profile_pics.push(profile_pic)
+      for(i=0;i<lol.data.length;i++){ profile_pics.push(profile_pic) }
 
-      thiss.setState({posts: thiss.state.posts.concat(lol.data), profile_pics: profile_pics, next: lol.paging.next})
+      thiss.setState({posts: thiss.state.posts.concat(lol.data), 
+                      profile_pics: profile_pics, 
+                      next: lol.paging.next})
       $('#the_progress_bar').hide()
-      //console.log('set state')
       localStorage.loaded = true
     })
   },
 
-  componentDidMount: function(){
-    $('.navbar-toggle').css('width','40px')
-    $('.navbar-toggle').css('height','40px')
-    $('.navbar-toggle').html('<i class="fa fa-refresh" style="color:#777"></i>')
-
+  loadMoreParseItems: function(paging_url){
     thiss = this;
-    localStorage.loaded = true
-    $(document).scroll(function(){
-      var scrollPercent = $(window).scrollTop() / ($(document).height() - $(window).height())
-      //console.log($(window).scrollTop() == $(document).height() - $(window).height())
-
-      //if(scrollPercent > 0.750 && scrollPercent < 0.752){
-      //if(scrollPercent == 0.753){
-      if($(window).scrollTop() == $(document).height() - $(window).height()){
-        console.log('load more stuff')
-        thiss.loadMoreItems(thiss.state.next)
-        $('#the_progress_bar').show()
-      }
+    $.ajax({ url: paging_url })
+    .success(function(the_lol) {
+      lol = the_lol
+      thiss.setState({posts: thiss.state.posts.concat(lol.data), 
+                      profile_pics: profile_pics, 
+                      next: lol.paging.next})
+      $('#the_progress_bar').hide()
+      localStorage.loaded = true
     })
+  },
 
-
-    $('.navbar-toggle').on('click', function(){
-      console.log('clicked')
-      location.reload();
-    });
-
-    Parse.initialize("aIHDo506A6fdlZ7YZB6n93EZQeBvV8wBFsArgIYB", "wWQnUcWjA7ARW2s5n6zSfv52ypp1d7PmyMSoLxDh")
-    access_token = "CAACEdEose0cBAEpDZCRU7Uz3B9bNPIqzoWcT8lI9KnZAghbYd7GNsDTpBjuU56wnpotmetYHqO6LDjp9d8yAZAhAPhLtgv4tZACMvkKeWIFj3Tk4iRPxifIwrk2PdZAHdULzL8iJThXPTYVBnDCOVefNx0KnFh69UF5H58AmDmhXzMXMcM9fKW9hqEdh2O7rkpO4gbqi1VgZDZD"
-
-    $.ajax({
-      //url: "https://api.parse.com/1/classes/Post?limit=20&include=user,comments,users_who_commented",
-      url: "https://api.parse.com/1/classes/_User",
-      headers:{"X-Parse-Application-Id": "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
-       "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
-      },
-      //data:'order=-post_created_at_timestamp',
-      //data:'order=-updatedAt',
-    }).success(function(lol) {
-      console.log(lol.results)
-      for(i=0;i<lol.results.length;i++)
-        localStorage.setItem(lol.results[i].fb_id+"", lol.results[i].fb_profile_pic)
-    })
+  getFacebookPosts: function(){
+    // Get Posts 
+    access_token = "CAACEdEose0cBAE9aGl5eAZCNequsFg1y85o2ZBY0fgt1MU4qOQdc2Ax2g7MjRZAAZCB8hFOdKw3k4Lumyn2c7yK6sQLZBO3bDjxuexnAipOyAfCvMo5dh9nuEm3sDkQGdURI15We5ZBaU4sTFgOLGowIJvxjZB0cXopZCA2Ii15imHx2Dw98KNwLg2cNpwa59rwhAXVlaVkaiAZDZD"
     $.ajax({
       url: "https://graph.facebook.com/595943383784905/feed?access_token="+access_token
     }).success(function(lol) {
       profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
       profile_pics = []
-      for(i=0;i<lol.data.length;i++)
-        profile_pics.push(profile_pic)
+      for(i=0;i<lol.data.length;i++){ profile_pics.push(profile_pic) }
 
-      thiss.setState({posts: lol.data, profile_pics: profile_pics, next: lol.paging.next})
+      thiss.setState({posts: lol.data, 
+                      profile_pics: profile_pics, 
+                      next: lol.paging.next })
 
       profile_pics = []
       for(i=0;i<lol.data.length;i++){
@@ -249,13 +216,85 @@ var Feed = React.createClass({
     });
   },
 
+  beginningStyle: function() {
+    $('.navbar-toggle').css('width','40px')
+    $('.navbar-toggle').css('height','40px')
+    $('.navbar-toggle').html('<i class="fa fa-refresh" style="color:#777"></i>')
+
+    $('.navbar-toggle').on('click', function(){
+      console.log('clicked')
+      location.reload();
+    });
+  },
+
+  getScrapedProfilePics: function() {
+    // The Profile Pics
+    $.ajax({
+      //url: "https://api.parse.com/1/classes/Post?limit=20&include=user,comments,users_who_commented",
+      url: "https://api.parse.com/1/classes/_User",
+      headers:{"X-Parse-Application-Id": "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+       "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+      },
+      //data:'order=-post_created_at_timestamp',
+      //data:'order=-updatedAt',
+    }).success(function(lol) {
+      console.log(lol.results)
+      for(i=0;i<lol.results.length;i++)
+        localStorage.setItem(lol.results[i].fb_id+"", lol.results[i].fb_profile_pic)
+    })
+  },
+
+  getParsePosts: function(){
+    // The Profile Pics
+    console.log('get Parse posts')
+    $.ajax({
+      url: "https://api.parse.com/1/classes/Post?limit=20&include=user,comments,users_who_commented",
+      headers:{"X-Parse-Application-Id": "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+       "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+      },
+      //data:'order=-post_created_at_timestamp',
+      //data:'order=-updatedAt',
+    }).success(function(lol) {
+      console.log(lol.results)
+      thiss.setState({posts: lol.results, next: "lol.paging.next" })
+    })
+  },
+
+  componentDidMount: function(){
+    this.beginningStyle()
+
+    thiss = this;
+    $(document).scroll(function() {
+      if($(window).scrollTop() == $(document).height() - $(window).height()) {
+        console.log('load more stuff')
+        //thiss.loadMoreItems(thiss.state.next)
+        $('#the_progress_bar').show()
+      }
+    })
+
+    first_key = "aIHDo506A6fdlZ7YZB6n93EZQeBvV8wBFsArgIYB"
+    second_key = "wWQnUcWjA7ARW2s5n6zSfv52ypp1d7PmyMSoLxDh"
+    Parse.initialize(first_key, second_key)
+
+    this.getParsePosts()
+    //this.getFacebookPosts()
+  },
+
   render: function(){
     posts = []
     for(i=0;i<this.state.posts.length;i++){
-      posts.push(<Post post={this.state.posts[i]} 
+      posts.push(<ParsePost post={this.state.posts[i]} 
                        fb_profile_pic={this.state.profile_pics[i]}
                        key={this.state.posts[i].objectId} />)
     }
+
+/*  Facebook Posts
+    for(i=0;i<this.state.posts.length;i++){
+      posts.push(<FacebookPost post={this.state.posts[i]} 
+                       fb_profile_pic={this.state.profile_pics[i]}
+                       key={this.state.posts[i].objectId} />)
+    }
+*/
     /*
      * Not In MVP
      *<createPost createPost={this.createPost}/>
@@ -270,28 +309,31 @@ var Feed = React.createClass({
   },
 
   createPost: function(body){
-    the_data = {
+    data = {
       body   : body,
       user : {
         "__type"    : "Pointer",
         "className" : "_User",
-        "objectId"  : "5lgpbcsu6c",
+        "objectId"  : "5lgpbcsu6c", //Parse.User.current
       }, 
+      from : {
+        name : "Robin Singh"
+      },
+      message: body,
       post_created_at:moment().format('MMMM Do YYYY, h:mm:ss a'),
     }
 
-    console.log(the_data)
-
     $.ajax({
       url: "https://api.parse.com/1/classes/Post",
-      type: "post",
-      dataType: "json",
+      type: "POST",
+      dataType: "JSON",
       contentType: "application/json",
-      headers:{"X-Parse-Application-Id": "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
-       "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+      headers : {
+        "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+        "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
       },
-      data: JSON.stringify(the_data),
-    })
+      data: JSON.stringify(data),
+    });
 
     tmp = this.state.posts
     tmp.unshift(the_data)
@@ -336,6 +378,7 @@ var createPost = React.createClass({
     fontSize:'12px',
     fontWeight:'500'
   }
+  // <a href="#" onClick={this.fetch} className="btn btn-primary btn-xs" style={{width:'100px',marginRight:'10px'}}>Upload Image</a>
     return (
       <div className="panel panel-default">
         <div className="panel-body">
@@ -356,7 +399,6 @@ var createPost = React.createClass({
 
         <div className="panel-footer" style={{height:'44px'}}>
           <div style={{float:'right'}}>
-          <a href="#" onClick={this.fetch} className="btn btn-primary btn-xs" style={{width:'100px',marginRight:'10px'}}>Upload Image</a>
           <a href="#" className="btn btn-primary btn-xs" style={{width:'60px'}} onClick={this.createPost}>Post</a>
           </div>
         </div>
@@ -382,11 +424,23 @@ var Workspace = Backbone.Router.extend({
     "signup": "signup",
     "newsignup": "newsignup",
     "offline": "offline",
+    "create_account": "create_account",
+    "verification": "verification",
   },
 
   main: function() {
     //console.log('main')
     React.renderComponent(Home(), document.getElementById('content'));
+  },
+
+  create_account: function() {
+    //console.log('main')
+    React.renderComponent(CreateAccount(), document.getElementById('content'));
+  },
+
+  verification: function() {
+    //console.log('main')
+    React.renderComponent(Verification(), document.getElementById('content'));
   },
 
   members: function() {
