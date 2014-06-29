@@ -336,7 +336,7 @@ var Feed = React.createClass({
     });
 
     tmp = this.state.posts
-    tmp.unshift(the_data)
+    tmp.unshift(data)
     this.setState({posts: tmp})
   },
 
