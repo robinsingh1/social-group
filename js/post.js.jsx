@@ -7,7 +7,10 @@ var ParsePost = React.createClass({
     comments = (typeof p.comments == "undefined") ? [] : p.comments
     u = (typeof p.users_who_commented == "undefined") ? [] : p.users_who_commented
 
-    return {comments: comments, users: u }
+    return { comments   : comments, 
+             users      : u,
+             user_likes : p.user_likes,
+    }
   },
 
   makeid: function() {
@@ -23,7 +26,7 @@ var ParsePost = React.createClass({
     console.log(comments)
 
     new_comment = {
-      comment_author_id : "Test Test",
+      comment_author_id : "Robin Singh",
       comment_body : body,
       comment_date : new Date().getTime(),
       likes_link: "no_likes",
@@ -69,35 +72,31 @@ var ParsePost = React.createClass({
     */
   },
 
-  commentLike: function(key){
-    console.log($(this.getDOMNode()).find())
-
-    comments = this.state.comments
-    for(i=0;i<comments.length;i++)
-      if(comments[i].objectId == key)
-        comments[i].user_likes.push({})
-        
-    //this.setState({comments: comments})
-    // add user can only like something once logic
-    // if liked add unlike
-  },
-
   postComment: function(){
     input = $(this.getDOMNode()).find('textarea').focus()
   },
 
   postLike: function(e){
-    //console.log('post like')
-
+    user_likes = this.state.user_likes
     text = $(this.getDOMNode()).find('#postLike').text()
-    if( text == 'Like')
+    if( text == 'Like'){
       $(this.getDOMNode()).find('#postLike').text('Unlike')
-    else
+      user_likes.push({})
+      this.setState({user_likes : user_likes})
+    } else {
       $(this.getDOMNode()).find('#postLike').text('Like')
+      user_likes.pop()
+      this.setState({user_likes : user_likes })
+    }
 
     // get the key of specific post and modify user_likes
+    // 3 states
+    // - No one likes
+    // - 1 person likes
+    //   - Current User
+    //   - Other Person
+    // - Multiple Likes
   },
-
 
   render: function(){
     var post = this.props.post
@@ -105,16 +104,23 @@ var ParsePost = React.createClass({
     show_likes = ""
 
     comments = []
-    for(i=0;i<this.state.comments.length;i++){
+    for(i=0;i<this.state.comments.length;i++) {
+      c = this.state.comments[i]
+      user_likes = (typeof c.user_likes == "undefined") ? [] : c.user_likes
       comments.push(<Comment comment={this.state.comments[i]} 
+                             user_likes = {user_likes}
                              key={this.makeid()}
                              commentLike={this.commentLike}
                              users={this.state.users[i]}/>)
     }
-    /* Display On Web Comments 
-    if(post.user_likes.length > 0)
-      show_likes = <LikesAndSeens likes = {post.user_likes} />
 
+    console.log(post)
+
+    if(typeof post.user_likes != "undefined")
+      if(post.user_likes.length > 0)
+        show_likes = <LikesAndSeens likes = {this.state.user_likes} />
+
+    /* Display On Web Comments 
          {show_likes}
           <CreateComment addComment={this.addComment}/>
         <div className="panel-footer">
@@ -140,65 +146,13 @@ var ParsePost = React.createClass({
                     postComment={this.postComment}
                     postLike={this.postLike}/>
           <ul className="list-group">
-            {comments}
             {show_likes}
+            {comments}
             <CreateComment addComment={this.addComment}/>
           </ul>
         </div>
       </div>
     );
-  }
-});
-
-var Comment = React.createClass({
-  render: function(){
-    comment = this.props.comment
-    commentStyle = { backgroundColor : '#f5f5f5' }
-    comment = (typeof comment == "undefined") ? {} : comment
-
-    if(typeof comment.users_who_commented == "undefined")
-      comment.users_who_commented = {}
-
-    formatted_date = moment.utc(comment.comment_date).format("MMMM Do [at] h:mm a")
-    console.log(formatted_date)
-
-    profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
-
-    
-    likes = ""
-    if(comment.user_likes.length > 0)
-      likes = <span><i className="fa fa-thumbs-up"/>{" "+comment.user_likes.length}</span>
-    
-    return (
-        <li className="list-group-item" style={commentStyle}>
-          <div className="media" >
-            <a href="#" style={{padding:'0',width:'34px',marginBottom:'0',marginTop:'2px'}} 
-              className="pull-left thumbnail">
-              <img src={profile_pic} className="media-object" style={{borderRadius:'2px'}}/>
-            </a>
-            <div className="media-body">
-              <h5 className="media-heading" style={{display:'inline',fontSize:'12px'}}>
-                <a href="#">{comment.comment_author_id}</a>
-              </h5>
-      <span style={{marginLeft:'10px',fontSize:'12px'}}>{comment.comment_body} </span>
-              <br/>
-              <span style={{fontSize:'12px'}}><span className="text-muted" >
-              {formatted_date}
-              </span>&nbsp;&nbsp;
-              <a href="#" onClick={this.commentLike} id="commentLike">Like</a>
-              &nbsp; &nbsp;
-              <a href="#" style={{textDecoration:'none'}}>{likes}</a>
-              </span>
-            </div>
-          </div>
-        </li>
-    );
-  },
-
-
-  commentLike: function(e){
-    e.preventDefault()
-    this.props.commentLike(this.props.key)
   }
 });
 

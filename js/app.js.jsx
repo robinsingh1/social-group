@@ -11,7 +11,7 @@
 
 var NavBar = React.createClass({
   render: function() {
-            /* 
+      /* 
         <ul className="nav navbar-nav navbar-right">
           <li className="dropdown">
             <a href="#" className="dropdown-toggle" data-toggle="dropdown">
@@ -49,7 +49,9 @@ var NavBar = React.createClass({
         <span className="icon-bar"></span>
         </button>
         <a className="navbar-brand" href="#">
-        <i className="fa fa-home" />&nbsp; NeighborsCircle</a>
+        <i className="fa fa-home" />&nbsp; NeighborsCircle
+        - <h5 style={{display:'inline'}}>{this.props.name}</h5>
+        </a>
         </div>
 
         <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -65,18 +67,41 @@ var NavBar = React.createClass({
 });
 
 var Home = React.createClass({
+  getInitialState: function() {
+    return {
+      name : "",
+      id : "",
+      description : "",
+    }
+  },
+  componentDidMount: function() {
+    currentUserId = "j9X362qr4t"
+    thiss = this;
+    $.ajax({
+      url: "https://api.parse.com/1/classes/_User/"+currentUserId+'?include=neighborhood',
+      headers : {
+        "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+        "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+      },
+    }).success(function(lol){
+      thiss.setState({
+        name: lol.neighborhood.name,
+        id: lol.objectId,
+        description: lol.neighborhood.description
+      })
+    })
+  },
   render: function(){
     //<Categories /> //<MembersBox />
-    // Show the name of the neighborhood
     return (
       <div>
-        <NavBar />
+        <NavBar name={this.state.name}/>
         <div className="container" style={{width:'auto'}}>
           <div className="row">
-            <div className="col-md-2">
-<Categories />
+            <div className="col-md-3">
+              <AboutNeighborhood description={this.state.description}/>
             </div>
-            <div className="col-md-offset-1 col-md-5 ">
+            <div className="col-md-5 ">
               <Feed />
               <div id="the_progress_bar">
               <div className="progress progress-striped active">
@@ -86,12 +111,36 @@ var Home = React.createClass({
               </div>
             </div> 
             </div>
-            <div className="col-md-offset-1 col-md-3">
-<MembersBox />
+            <div className="col-md-offset-1 col-md-3"> 
+              <div className="panel panel-default">
+                <div className="panel-heading">
+                  Members
+                </div>
+                <MembersDetails facesPerRow={3} 
+                                imageWidth={'50px'} 
+                                height={'300px'}
+                                neighborhood={this.state.id} />
             </div>
-            <div className="col-md-1">
             </div>
           </div>
+        </div>
+      </div>
+    )
+  }
+});
+
+var AboutNeighborhood = React.createClass({
+  render: function() {
+    return (
+      <div className="panel panel-default">
+        <div className="panel-heading">
+          <h6 style={{fontWeight:'bold',margin:'0px'}} className="text-muted">
+            <i className="fa fa-globe" />&nbsp; &nbsp;ABOUT</h6>
+        </div>
+        <div className="panel-body">
+        <span style={{fontSize:'12px'}}>
+          {this.props.description}
+        </span>
         </div>
       </div>
     )
@@ -101,12 +150,7 @@ var Home = React.createClass({
 var MembersBox = React.createClass({
   render: function(){
     return (
-      <div className="panel panel-default">
-        <div className="panel-heading">
-          Members
-        </div>
-          <MembersDetails facesPerRow={3} imageWidth={'50px'} height={'300px'}/>
-      </div>
+      <div></div>
     )
   }
 });
@@ -152,9 +196,127 @@ var ProspectSearch = React.createClass({
 
 var Feed = React.createClass({
   getInitialState: function(){
-    return {posts: [] , profile_pics:[], next:""}
+    return {posts: [] }
   },
 
+  getParsePosts: function() {
+    console.log('get Parse posts')
+    _this = this;
+    $.ajax({
+      url: "https://api.parse.com/1/classes/Post?limit=20&include=user,comments,users_who_commented",
+      headers : {
+        "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+        "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+      },
+      data:'where={"neighborhood": {"__type":"Pointer","objectId":"XzDHTk60bi","className":"Neighborhood"}}',
+      success: function(lol) {
+        console.log(lol.results)
+        _this.setState({ posts: lol.results })
+      }
+    })
+  },
+
+  componentDidMount: function() {
+    /*
+    $(document).scroll(function() {
+      if($(window).scrollTop() == $(document).height() - $(window).height()) {
+        console.log('load more stuff')
+        //thiss.loadMoreItems(thiss.state.next)
+        $('#the_progress_bar').show()
+      }
+    });
+    */
+
+    first_key = "aIHDo506A6fdlZ7YZB6n93EZQeBvV8wBFsArgIYB"
+    second_key = "wWQnUcWjA7ARW2s5n6zSfv52ypp1d7PmyMSoLxDh"
+    Parse.initialize(first_key, second_key)
+
+    //this.getParsePosts() //this.getFacebookPosts()
+  },
+  componentWillReceiveProps: function(){
+    currentUserId = "j9X362qr4t"
+    thiss = this;
+    $.ajax({
+      url: "https://api.parse.com/1/classes/Post?limit=20&include=user,comments,users_who_commented",
+      headers : {
+        "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+        "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+      },
+      data:'where={"neighborhood": {"__type":"Pointer","objectId":"XzDHTk60bi","className":"Neighborhood"}}',
+      success: function(lol) {
+        console.log(lol.results)
+        thiss.setState({ posts : "lol" })
+      }
+    })
+  },
+
+  render: function(){
+    console.log(this.state.posts)
+    the_posts = []
+    profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
+    for(i=0;i<this.state.posts.length;i++){
+      the_posts.push(<ParsePost post={this.state.posts[i]} 
+                       fb_profile_pic={profile_pic}
+                       key={this.state.posts[i].objectId} />)
+    }
+
+    return (
+      <div>
+        <createPost createPost={this.createPost}/>
+        {the_posts}
+      </div>
+    )
+    /*  
+     *  Facebook Posts
+        for(i=0;i<this.state.posts.length;i++){
+          posts.push(<FacebookPost post={this.state.posts[i]} 
+                           fb_profile_pic={this.state.profile_pics[i]}
+                           key={this.state.posts[i].objectId} />)
+        }
+     *
+    */
+  },
+
+  createPost: function(body){
+    data = {
+      body   : body,
+      user : {
+        "__type"    : "Pointer",
+        "className" : "_User",
+        "objectId"  : "5lgpbcsu6c", //Parse.User.current
+        "first_name" : "Robin",
+        "last_name" : "Singh",
+      }, 
+      from : {
+        name : "Robin Singh"
+      },
+      user_likes : [],
+      message: body,
+      post_created_at_timestamp: Math.round((new Date()).getTime() / 1000),
+    }
+
+    if(body.trim() != ""){
+      $.ajax({
+        url: "https://api.parse.com/1/classes/Post",
+        type: "POST",
+        dataType: "JSON",
+        contentType: "application/json",
+        headers : {
+          "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+          "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+        },
+        data: JSON.stringify(data),
+      });
+
+      tmp = this.state.posts
+      tmp.unshift(data)
+      this.setState({posts: tmp})
+    } else {
+      //show alert to user
+    }
+  },
+
+/*
   loadMoreItems: function(paging_url){
     thiss = this;
     $.ajax({ url: paging_url })
@@ -186,7 +348,6 @@ var Feed = React.createClass({
   },
 
   getFacebookPosts: function(){
-    // Get Posts 
     access_token = "CAACEdEose0cBAE9aGl5eAZCNequsFg1y85o2ZBY0fgt1MU4qOQdc2Ax2g7MjRZAAZCB8hFOdKw3k4Lumyn2c7yK6sQLZBO3bDjxuexnAipOyAfCvMo5dh9nuEm3sDkQGdURI15We5ZBaU4sTFgOLGowIJvxjZB0cXopZCA2Ii15imHx2Dw98KNwLg2cNpwa59rwhAXVlaVkaiAZDZD"
     $.ajax({
       url: "https://graph.facebook.com/595943383784905/feed?access_token="+access_token
@@ -200,10 +361,12 @@ var Feed = React.createClass({
                       next: lol.paging.next })
 
       profile_pics = []
-      for(i=0;i<lol.data.length;i++){
+      for(i=0;i<lol.data.length;i++) {
         $.ajax({
           url:"https://api.parse.com/1/classes/_User",
-          headers:{"X-Parse-Application-Id": "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog", "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+          headers:{
+            "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog", 
+            "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
           },
           data:'where={"fb_id":'+lol.data[i].from.id+'}',
         }).success(function(lol){
@@ -228,7 +391,6 @@ var Feed = React.createClass({
   },
 
   getScrapedProfilePics: function() {
-    // The Profile Pics
     $.ajax({
       //url: "https://api.parse.com/1/classes/Post?limit=20&include=user,comments,users_who_commented",
       url: "https://api.parse.com/1/classes/_User",
@@ -243,103 +405,7 @@ var Feed = React.createClass({
         localStorage.setItem(lol.results[i].fb_id+"", lol.results[i].fb_profile_pic)
     })
   },
-
-  getParsePosts: function(){
-    // The Profile Pics
-    console.log('get Parse posts')
-    $.ajax({
-      url: "https://api.parse.com/1/classes/Post?limit=20&include=user,comments,users_who_commented",
-      headers:{"X-Parse-Application-Id": "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
-       "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
-      },
-      //data:'order=-post_created_at_timestamp',
-      //data:'order=-updatedAt',
-    }).success(function(lol) {
-      console.log(lol.results)
-      thiss.setState({posts: lol.results, next: "lol.paging.next" })
-    })
-  },
-
-  componentDidMount: function(){
-    this.beginningStyle()
-
-    thiss = this;
-    $(document).scroll(function() {
-      if($(window).scrollTop() == $(document).height() - $(window).height()) {
-        console.log('load more stuff')
-        //thiss.loadMoreItems(thiss.state.next)
-        $('#the_progress_bar').show()
-      }
-    })
-
-    first_key = "aIHDo506A6fdlZ7YZB6n93EZQeBvV8wBFsArgIYB"
-    second_key = "wWQnUcWjA7ARW2s5n6zSfv52ypp1d7PmyMSoLxDh"
-    Parse.initialize(first_key, second_key)
-
-    this.getParsePosts()
-    //this.getFacebookPosts()
-  },
-
-  render: function(){
-    posts = []
-    for(i=0;i<this.state.posts.length;i++){
-      posts.push(<ParsePost post={this.state.posts[i]} 
-                       fb_profile_pic={this.state.profile_pics[i]}
-                       key={this.state.posts[i].objectId} />)
-    }
-
-/*  Facebook Posts
-    for(i=0;i<this.state.posts.length;i++){
-      posts.push(<FacebookPost post={this.state.posts[i]} 
-                       fb_profile_pic={this.state.profile_pics[i]}
-                       key={this.state.posts[i].objectId} />)
-    }
 */
-    /*
-     * Not In MVP
-     *<createPost createPost={this.createPost}/>
-        
-    */
-    return (
-      <div>
-        <createPost createPost={this.createPost}/>
-        {posts}
-      </div>
-    )
-  },
-
-  createPost: function(body){
-    data = {
-      body   : body,
-      user : {
-        "__type"    : "Pointer",
-        "className" : "_User",
-        "objectId"  : "5lgpbcsu6c", //Parse.User.current
-      }, 
-      from : {
-        name : "Robin Singh"
-      },
-      message: body,
-      post_created_at:moment().format('MMMM Do YYYY, h:mm:ss a'),
-    }
-
-    $.ajax({
-      url: "https://api.parse.com/1/classes/Post",
-      type: "POST",
-      dataType: "JSON",
-      contentType: "application/json",
-      headers : {
-        "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
-        "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
-      },
-      data: JSON.stringify(data),
-    });
-
-    tmp = this.state.posts
-    tmp.unshift(data)
-    this.setState({posts: tmp})
-  },
-
 });
 
 var createPost = React.createClass({
@@ -379,11 +445,11 @@ var createPost = React.createClass({
     fontWeight:'500'
   }
   // <a href="#" onClick={this.fetch} className="btn btn-primary btn-xs" style={{width:'100px',marginRight:'10px'}}>Upload Image</a>
+  // <a href="#" style={tagStyle} className="btn-xs btn btn-primary" data-toggle="dropdown" ><i className="fa fa-tag" /></a>
     return (
       <div className="panel panel-default">
         <div className="panel-body">
         <div className="dropdown">
-          <a href="#" style={tagStyle} className="btn-xs btn btn-primary" data-toggle="dropdown" ><i className="fa fa-tag" /></a>
           <ul className="dropdown-menu" style={{position:'absolute',left:'322px',top:'11px' }}>
             <li><a href="#" style={dropdown}>Classifieds</a></li>
             <li><a href="#" style={dropdown}>Free Items</a></li>
@@ -405,7 +471,8 @@ var createPost = React.createClass({
       </div>
     );
   },
-  createPost: function(){
+  createPost: function(e){
+    e.preventDefault()
     this.props.createPost($('textarea').val())
     $('textarea').val('')
   }
