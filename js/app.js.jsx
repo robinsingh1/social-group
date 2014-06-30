@@ -233,6 +233,7 @@ var Feed = React.createClass({
 
     //this.getParsePosts() //this.getFacebookPosts()
   },
+
   componentWillReceiveProps: function(){
     currentUserId = "j9X362qr4t"
     thiss = this;
@@ -244,8 +245,7 @@ var Feed = React.createClass({
       },
       data:'where={"neighborhood": {"__type":"Pointer","objectId":"XzDHTk60bi","className":"Neighborhood"}}',
       success: function(lol) {
-        console.log(lol.results)
-        thiss.setState({ posts : "lol" })
+        thiss.setState({ posts : lol.results })
       }
     })
   },
