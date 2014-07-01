@@ -7,9 +7,11 @@ var ParsePost = React.createClass({
     comments = (typeof p.comments == "undefined") ? [] : p.comments
     u = (typeof p.users_who_commented == "undefined") ? [] : p.users_who_commented
 
+    user_likes = (typeof p.user_likes == "undefined") ? [] : p.user_likes
+
     return { comments   : comments, 
              users      : u,
-             user_likes : p.user_likes,
+             user_likes : user_likes,
     }
   },
 
@@ -21,9 +23,8 @@ var ParsePost = React.createClass({
     return a;
   },
 
-  addComment: function(blah, body){
+  addComment: function(blah, body) {
     var comments = this.state.comments, users = this.state.users;
-    console.log(comments)
 
     new_comment = {
       comment_author_id : "Robin Singh",
@@ -34,42 +35,15 @@ var ParsePost = React.createClass({
       user_likes: []
     }
 
-    new_user = { }
+    new_user = { } //current user
+
     if(body != "") {
       comments.push(new_comment); users.push(new_user);
       this.setState({comments: comments, users: users})
-    }
-
-    // Persist In Parse
-    /*
-    data = {
-      body   : body,
-      user : {
-        "__type"    : "Pointer",
-        "className" : "_User",
-        "objectId"  : "5lgpbcsu6c", //Parse.User.current
-      }, 
-      from : {
-        name : "Robin Singh"
-      },
-      message: body,
-      post_created_at:moment().format('MMMM Do YYYY, h:mm:ss a'),
-    }
-
-    console.log(data)
-
-    $.ajax({
-      url: "https://api.parse.com/1/classes/Post",
-      type: "POST",
-      dataType: "JSON",
-      contentType: "application/json",
-      headers : {
-        "X-Parse-Application-Id": "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
-       "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
-      },
-      data: JSON.stringify(data),
-    });
-    */
+    } 
+    
+    persistComment( localStorage.currentUserId, 
+                    this.props.post.objectId, body )
   },
 
   postComment: function(){
@@ -104,6 +78,7 @@ var ParsePost = React.createClass({
     show_likes = ""
 
     comments = []
+    console.log(this.state.comments)
     for(i=0;i<this.state.comments.length;i++) {
       c = this.state.comments[i]
       user_likes = (typeof c.user_likes == "undefined") ? [] : c.user_likes
@@ -114,25 +89,9 @@ var ParsePost = React.createClass({
                              users={this.state.users[i]}/>)
     }
 
-    console.log(post)
-
     if(typeof post.user_likes != "undefined")
       if(post.user_likes.length > 0)
         show_likes = <LikesAndSeens likes = {this.state.user_likes} />
-
-    /* Display On Web Comments 
-         {show_likes}
-          <CreateComment addComment={this.addComment}/>
-        <div className="panel-footer">
-          <a href="#" className="btn btn-primary" style={{width:'48%'}}>
-            <i className="fa fa-thumbs-up" />&nbsp;Like
-          </a>
-        <a href="#" className="btn btn-primary" style={{width:'50%',float:'right'}}>
-          <i className="fa fa-comment" />&nbsp;Comment
-        </a>
-        </div>
-    */
-
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
     tstamp = post.post_created_at_timestamp
     tstamp = moment.unix(tstamp).format("MMMM Do [at] h:mm a")
@@ -153,6 +112,20 @@ var ParsePost = React.createClass({
         </div>
       </div>
     );
+
+    /* Display On Web Comments 
+         {show_likes}
+          <CreateComment addComment={this.addComment}/>
+        <div className="panel-footer">
+          <a href="#" className="btn btn-primary" style={{width:'48%'}}>
+            <i className="fa fa-thumbs-up" />&nbsp;Like
+          </a>
+        <a href="#" className="btn btn-primary" style={{width:'50%',float:'right'}}>
+          <i className="fa fa-comment" />&nbsp;Comment
+        </a>
+        </div>
+    */
+
   }
 });
 

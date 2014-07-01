@@ -68,8 +68,6 @@ var Comment = React.createClass({
       this.setState({user_likes : user_likes})
     }
 
-
-    
     //this.props.commentLike(this.props.key)
   }
 });
