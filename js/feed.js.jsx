@@ -14,7 +14,7 @@ var Feed = React.createClass({
     $(document).scroll(function() {
       if($(window).scrollTop() == $(document).height() - $(window).height()) {
         if(!eval(localStorage.loadedAllPosts)){
-          console.log('load more stuff')
+          //console.log('load more stuff')
           thiss.loadMoreParseItems()
           $('#the_progress_bar').show()
         }
@@ -39,7 +39,7 @@ var Feed = React.createClass({
       },
       data:'where={"neighborhood": {"__type":"Pointer","objectId":"'+currentNeighborhood+'","className":"Neighborhood"}}',
     }).success(function(lol) {
-      console.log(lol.results)
+      //console.log(lol.results)
       if(lol.results.length == 0){
         $('#no_more_posts').show()
         localStorage.loadedAllPosts = true
@@ -70,7 +70,7 @@ var Feed = React.createClass({
   },
 
   render: function(){
-    console.log(this.state.posts)
+    //console.log(this.state.posts)
     the_posts = []
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
     for(i=0;i<this.state.posts.length;i++){

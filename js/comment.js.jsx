@@ -2,11 +2,19 @@
 
 var Comment = React.createClass({
   getInitialState: function(){
-    return {"user_likes" : this.props.user_likes}
+    likes = this.props.comment.user_likes
+
+    currentUser = {objectId:'j9X362qr4t'}
+    currentUserLiked = _.where(likes, currentUser).length > 0
+
+    return { user_likes  : this.props.user_likes,
+             liked       : currentUserLiked
+    }
   },
 
   render: function(){
     comment = this.props.comment
+    console.log(comment)
     commentStyle = { backgroundColor : '#f5f5f5' }
     comment = (typeof comment == "undefined") ? {} : comment
 
@@ -14,13 +22,14 @@ var Comment = React.createClass({
       comment.users_who_commented = {}
 
     formatted_date = moment.utc(comment.comment_date).format("MMMM Do [at] h:mm a")
-    console.log(formatted_date)
+    //console.log(formatted_date)
 
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
 
     likes = ""
     if(this.state.user_likes.length > 0)
       likes = <span><i className="fa fa-thumbs-up"/>{" "+comment.user_likes.length}</span>
+    liked = (this.state.liked) ? 'Unlike' : 'Like'
     
     return (
         <li className="list-group-item" style={commentStyle}>
@@ -38,7 +47,9 @@ var Comment = React.createClass({
               <span style={{fontSize:'12px'}}><span className="text-muted" >
               {formatted_date}
               </span>&nbsp;&nbsp;
-              <a href="#" onClick={this.commentLike} id="commentLike">Like</a>
+
+              <a href="#" onClick={this.commentLike} id="commentLike">{liked}</a>
+
               &nbsp; &nbsp;
               <a href="#" style={{textDecoration:'none'}} onClick={this.showUserLikes}>{likes}</a>
               </span>
@@ -58,14 +69,16 @@ var Comment = React.createClass({
 
     user_likes = this.state.user_likes
     text = $(this.getDOMNode()).find('#commentLike').text()
-    if( text == 'Like') {
-      $(this.getDOMNode()).find('#commentLike').text('Unlike')
+    if(!this.state.liked) {
+
+      persistCommentLike(this.props.comment.objectId)
       user_likes.push({})
-      this.setState({user_likes : user_likes})
+      this.setState({user_likes : user_likes, liked: true})
     } else {
-      $(this.getDOMNode()).find('#commentLike').text('Like')
+      persistCommentUnlike(this.props.comment.objectId)
+
       user_likes.pop()
-      this.setState({user_likes : user_likes})
+      this.setState({user_likes : user_likes, liked: false})
     }
 
     //this.props.commentLike(this.props.key)

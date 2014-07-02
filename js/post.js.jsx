@@ -1,17 +1,25 @@
 /** @jsx React.DOM */
 
+
+// Post Object Should Handle Previous User Likes
+// - On initial render, iterate through user_likes compare to current_user objectId
+//
 var ParsePost = React.createClass({
   getInitialState: function(){
     var postKeys = [], commentKeys = [], p = this.props.post;
 
     comments = (typeof p.comments == "undefined") ? [] : p.comments
     u = (typeof p.users_who_commented == "undefined") ? [] : p.users_who_commented
-
     user_likes = (typeof p.user_likes == "undefined") ? [] : p.user_likes
+    //console.log(user_likes)
+
+    currentUser = {objectId:'j9X362qr4t'}
+    currentUserLiked = _.where(user_likes, currentUser).length > 0
 
     return { comments   : comments, 
              users      : u,
              user_likes : user_likes,
+             liked      : currentUserLiked
     }
   },
 
@@ -42,8 +50,7 @@ var ParsePost = React.createClass({
       this.setState({comments: comments, users: users})
     } 
     
-    persistComment( localStorage.currentUserId, 
-                    this.props.post.objectId, body )
+    persistComment( localStorage.currentUserId, this.props.post.objectId, body )
   },
 
   postComment: function(){
@@ -53,14 +60,17 @@ var ParsePost = React.createClass({
   postLike: function(e){
     user_likes = this.state.user_likes
     text = $(this.getDOMNode()).find('#postLike').text()
-    if( text == 'Like'){
-      $(this.getDOMNode()).find('#postLike').text('Unlike')
+
+    if(!this.state.liked){
+      persistPostLike(this.props.post.objectId)
+
       user_likes.push({})
-      this.setState({user_likes : user_likes})
+      this.setState({user_likes : user_likes, liked : true })
     } else {
-      $(this.getDOMNode()).find('#postLike').text('Like')
+      persistPostUnlike(this.props.post.objectId)
+
       user_likes.pop()
-      this.setState({user_likes : user_likes })
+      this.setState({user_likes : user_likes, liked : false })
     }
 
     // get the key of specific post and modify user_likes
@@ -78,7 +88,7 @@ var ParsePost = React.createClass({
     show_likes = ""
 
     comments = []
-    console.log(this.state.comments)
+    //console.log(this.state.comments)
     for(i=0;i<this.state.comments.length;i++) {
       c = this.state.comments[i]
       user_likes = (typeof c.user_likes == "undefined") ? [] : c.user_likes
@@ -102,6 +112,7 @@ var ParsePost = React.createClass({
                       author={post.user} 
                       pic={profile_pic}/>
           <PostBody body={post.body} 
+                    liked={this.state.liked}
                     postComment={this.postComment}
                     postLike={this.postLike}/>
           <ul className="list-group">
@@ -139,7 +150,7 @@ var PostAuthor = React.createClass({
     return (
   <div className="panel-heading" style={{backgroundColor:'white',border:'0'}}>
     <div className="media" style={{height:'45px'}}>
-      <a href="#" style={{padding:'0',width:'45px'}} className="pull-left thumbnail">
+      <a href="javascript:" style={{padding:'0',width:'45px'}} className="pull-left thumbnail">
         <img src={this.props.pic} className="media-object"/>
       </a>
       <div className="media-body">
@@ -165,22 +176,14 @@ var PostBody = React.createClass({
     else
       the_image = <img src={image[0]} style={{width:'100%'}}className="thumbnail" />
   */
+    is_liked = (this.props.liked) ? "Unlike" : "Like"
 
-  /*
-   *
-        <a href="#" style={{fontSize:'12px'}} onClick={this.postLike}>Like</a>
-        &nbsp;
-        &nbsp;
-        <a href="#" style={{fontSize:'12px'}} onClick={this.postComment}>Comment</a>
-        <a href="http://www.facebook.com" style={{textDecoration:'none',color:'black'}}>{this.props.body}</a>
-  */
     return (
-        <div className="panel-body" style={{paddingBottom:'10px'}}>
-        {this.props.body}
+        <div className="panel-body" style={{paddingBottom:'10px'}}> {this.props.body}
         <div style={{paddingTop:'10px'}}>
-        <a href="#" id="postLike" style={{fontSize:'12px'}} onClick={this.postLike}>Like</a>
-        &nbsp;
-        &nbsp;
+        <a href="#" id="postLike" style={{fontSize:'12px'}} 
+                                  onClick={this.likeToggle}>{is_liked}</a>
+        &nbsp; &nbsp;
         <a href="#" style={{fontSize:'12px'}} onClick={this.postComment}>Comment</a>
         </div>
         </div>
@@ -192,7 +195,7 @@ var PostBody = React.createClass({
     this.props.postComment()
   },
 
-  postLike: function(e) {
+  likeToggle: function(e) {
     e.preventDefault()
     this.props.postLike()
   }

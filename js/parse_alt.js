@@ -93,18 +93,128 @@ function persistComment(author, post, body) {
   });
 }
 
-function persistPostLike() {
+function persistPostLike(post) {
   console.log('persist post like ')
+  //
+  // How to check if a person has already liked item 
+  //
+  
+  parse_headers = {
+    "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+    "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+  }
+  newLike = {
+    "user_likes" : {
+      "__op" : "AddUnique",
+      "objects": [{
+        "__type" : "Pointer",
+        "className" : "_User",
+        "objectId" : "j9X362qr4t"//current_user objectId
+      }]
+    }
+  },
+
+  $.ajax({
+    url: "https://api.parse.com/1/classes/Post/"+post,
+    type: "PUT",
+    dataType: "JSON",
+    contentType: "application/json",
+    headers : parse_headers,
+    data: JSON.stringify(newLike),
+  }).success(function(comment){
+    console.log(comment)
+  });
 }
 
-function persistCommentLike() {
+function persistCommentLike(comment) {
   console.log('persist comment like ')
+  //
+  // How to check if a person has already liked item 
+  //
+  
+  parse_headers = {
+    "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+    "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+  }
+  newLike = {
+    "user_likes" : {
+      "__op" : "AddUnique",
+      "objects": [{
+        "__type" : "Pointer",
+        "className" : "_User",
+        "objectId" : "j9X362qr4t"//current_user objectId
+      }]
+    }
+  },
+
+  $.ajax({
+    url: "https://api.parse.com/1/classes/Comment/"+comment,
+    type: "PUT",
+    dataType: "JSON",
+    contentType: "application/json",
+    headers : parse_headers,
+    data: JSON.stringify(newLike),
+  }).success(function(comment){
+    console.log(comment)
+  });
 }
 
-function persistPostUnlike() {
+function persistPostUnlike(post) {
   console.log('persist post unlike ')
+  parse_headers = {
+    "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+    "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+  }
+  newLike = {
+    "user_likes" : {
+      "__op" : "Remove",
+      "objects": [{
+        "__type" : "Pointer",
+        "className" : "_User",
+        "objectId" : "j9X362qr4t"//current_user objectId
+      }]
+    }
+  },
+
+  $.ajax({
+    url: "https://api.parse.com/1/classes/Post/"+post,
+    type: "PUT",
+    dataType: "JSON",
+    contentType: "application/json",
+    headers : parse_headers,
+    data: JSON.stringify(newLike),
+  }).success(function(comment){
+    console.log(comment)
+  });
 }
 
-function persistCommentUnlike() {
+function persistCommentUnlike(comment) {
   console.log('persist comment unlike ')
+
+  parse_headers = {
+    "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+    "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+  }
+
+  newLike = {
+    "user_likes" : {
+      "__op" : "Remove",
+      "objects": [{
+        "__type" : "Pointer",
+        "className" : "_User",
+        "objectId" : "j9X362qr4t"//current_user objectId
+      }]
+    }
+  },
+
+  $.ajax({
+    url: "https://api.parse.com/1/classes/Comment/"+comment,
+    type: "PUT",
+    dataType: "JSON",
+    contentType: "application/json",
+    headers : parse_headers,
+    data: JSON.stringify(newLike),
+  }).success(function(comment){
+    console.log(comment)
+  });
 }
