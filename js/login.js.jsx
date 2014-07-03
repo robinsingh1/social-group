@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var Auth = React.createClass({
+var Login = React.createClass({
   componentDidMount: function(){
     $('body').css({'overflow':'hidden'})
     $('#bg').css({'margin-top':'-20px'})
@@ -52,18 +52,17 @@ var Auth = React.createClass({
           <i className="fa fa-home" />
           <span style={{marginLeft:'5px'}}>NeighborsCircle</span>
         </h1> <span style={{marginLeft:'5px',fontSize:'16px',fontFamily:'proxima-nova-soft',color:'#FEB101'}}>{'The private social network for your neighborhood.'}</span>
-        <a href="#" className="btn btn-success btn-lg" style={{marginLeft:'300px',fontWeight:'bold'}}>Sign In</a>
+        <a href="#signup" className="btn btn-success btn-lg" style={{marginLeft:'250px',fontWeight:'bold'}}>Create New Account</a>
         <br /> <br /> <br />
         <br /> <br /> 
         <div className="panel panel-default center-block" style={{width:"500px"}}>
           <div className="panel-body">
-            <h1 style={{fontWeight:"bold",marginTop:'5px',fontFamily:"museo-sans-rounded"}} className="text-success">Find Your Neighborhood</h1>
+            <h1 style={{textAlign:'center',fontWeight:"bold",marginTop:'5px',fontFamily:"museo-sans-rounded"}} className="text-success">Welcome Back!</h1>
             <br/>
             <form onSubmit={this.createUser}>
-            <input id="address" placeholder="Please Enter Your Address including Apartment Number" className="form-control" style={{marginBottom:'10px'}}/>
-            <input id="email_address" placeholder="Please Enter Your Email Address" className="form-control" style={{marginBottom:'10px'}}/>
-            <input id="postal_code" placeholder="Please Enter Your Postal Code" className="form-control" style={{marginBottom:'10px'}}/>
-            <a href="#" onClick={this.createUser} className="btn btn-success btn-lg" style={{width:'100%',fontWeight:'bold'}}>Get Started Today</a>
+            <input id="login_email" placeholder="Email" className="form-control" style={{marginBottom:'10px'}}/>
+            <input id="login_password" placeholder="Password" className="form-control" style={{marginBottom:'10px'}} type="password"/>
+            <a href="#" onClick={this.loginUser} className="btn btn-success btn-lg" style={{width:'100%',fontWeight:'bold'}}>LOGIN</a>
             </form>
           </div>
         </div>
@@ -73,45 +72,35 @@ var Auth = React.createClass({
     );
   },
 
-  createUser: function(e){
-    // Thanks for signing up for neighborscircle email
-    // Check if address is valid
-    // Check which neighborhood adress belongs to 
-    //<img  style={imgStyle} src="http://static.memrise.com/accounts/img/auth/front.v1.png"/>
-    
-    address = $('#address').val()
-    postal_code = $('#postal_code').val()
+  loginUser: function(e){
     e.preventDefault()
-    data = {
-      username      : $('#email_address').val(),
-      password      : "testtest",
-      email         : $('#email_address').val()+"@gmail.com",
-      address       : address,
-      postal_code   : postal_code,
-    }
 
-    console.log(data)
-    localStorage.setItem('user_location', address + " " + postal_code)
+    login_email = $('#login_email').val()
+    login_pw = $('#login_password').val()
+    console.log(login_email)
+    console.log(login_pw)
 
-    
-    var user = new Parse.User();
-    user.set("username", $('#email_address').val());
-    user.set("password", "testtest");
-    user.set("email", $('#email_address').val()+"@gmail.com");
-    user.set("address_code", address);
-    user.set("postal_code", postal_code);
-    user.set("completed_signup", false);
-    user.set("address_verification", false);
-     
-    user.signUp(null, {
+    /*
+    Parse.User.logIn(login_email, login_pw, {
       success: function(user) {
-        the_user = user
-        console.log(the_user)
-        location.href = "#create_account"
+        location.href = "/"
       },
       error: function(user, error) {
         alert("Error: " + error.code + " " + error.message);
       }
+    });
+    */
+    data = {'username':login_email,'password':login_pw}
+    $.ajax({ 
+      url: 'https://api.parse.com/1/login' ,
+      headers : {
+        "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+        "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+      },
+      type:'GET',
+      data: data
+    }).success(function(lol) {
+      console.log(lol)
     });
   }
 });

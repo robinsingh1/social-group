@@ -147,6 +147,7 @@ var Workspace = Backbone.Router.extend({
     "offline": "offline",
     "create_account": "create_account",
     "verification": "verification",
+    "login": "login",
   },
 
   main: function() {
@@ -190,6 +191,10 @@ var Workspace = Backbone.Router.extend({
 
   offline: function(){
     React.renderComponent(Offline(), document.getElementById('content'));
+  },
+
+  login: function(){
+    React.renderComponent(Login(), document.getElementById('content'));
   },
 
 
