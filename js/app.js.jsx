@@ -9,38 +9,61 @@
 //- make download as csv work
 //- make dropdown choose between lists work
 
-
 var Home = React.createClass({
   getInitialState: function() {
+    neighborhood = ""
+    if(typeof localStorage.currentNeighborhood != "undefined")
+      neighborhood = localStorage.currentNeighborhood
+
     return {
       name : "",
-      id : "",
-      description : "",
+      id : neighborhood,
+      description : ""
     }
   },
 
   componentDidMount: function() {
-    // 
     localStorage.currentUserId = "j9X362qr4t"
     currentUserId = "j9X362qr4t"
-    thiss = this;
-    $.ajax({
-      url: "https://api.parse.com/1/classes/_User/"+currentUserId+'?include=neighborhood',
-      headers : {
-        "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
-        "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
-      },
-    }).success(function(lol){
-      thiss.setState({
-        name: lol.neighborhood.name,
-        id: lol.objectId,
-        description: lol.neighborhood.description
+    the_this = this;
+
+    if(typeof localStorage.currentNeighborhood == "undefined") {
+      console.log('undefined')
+      $.ajax({
+        url: "https://api.parse.com/1/classes/_User/"+currentUserId+'?include=neighborhood',
+        headers : {
+          "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+          "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+        },
+      }).success(function(lol){
+        thissss.setState({
+          name: lol.neighborhood.name,
+          id: lol.objectId,
+          description: lol.neighborhood.description
+        })
       })
-    })
+    } else {
+      console.log(localStorage.currentNeighborhood)
+      $.ajax({
+        url: "https://api.parse.com/1/classes/Neighborhood/"+localStorage.currentNeighborhood,
+        headers : {
+          "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+          "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+        },
+      }).success(function(lol){
+        console.log(lol)
+        the_this.setState({
+          name: lol.name,
+          id: lol.objectId,
+          description: lol.description
+        })
+      })
+    }
   },
 
   render: function(){
     //<Categories /> //<MembersBox />
+    console.log(this.state)
     return (
       <div>
         <NavBar name={this.state.name}/>
@@ -63,15 +86,10 @@ var Home = React.createClass({
                 </div>
             </div>
             <div className="col-md-offset-1 col-md-3"> 
-              <div className="panel panel-default">
-                <div className="panel-heading">
-                  Members
-                </div>
                 <MembersDetails facesPerRow={3} 
                                 imageWidth={'50px'} 
                                 height={'300px'}
                                 neighborhood={this.state.id} />
-            </div>
             </div>
           </div>
         </div>

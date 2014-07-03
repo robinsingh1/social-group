@@ -14,7 +14,6 @@ var Comment = React.createClass({
 
   render: function(){
     comment = this.props.comment
-    console.log(comment)
     commentStyle = { backgroundColor : '#f5f5f5' }
     comment = (typeof comment == "undefined") ? {} : comment
 

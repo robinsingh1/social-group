@@ -6,7 +6,6 @@ var Feed = React.createClass({
   },
 
   componentDidMount: function() {
-    _this = this;
     thiss = this;
     localStorage.currentPage = 0
     localStorage.loadedAllPosts = false

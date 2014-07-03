@@ -24,21 +24,21 @@ var MembersDetails = React.createClass({
 
   componentDidMount: function(){
     id = this.props.neighborhood
-    console.log('neighborhood')
-    id = "XzDHTk60bi"
-    _this = this;
+    console.log(id)
+    thisss = this;
+
     $.ajax({
-      url:"https://api.parse.com/1/classes/_User?",
+      url:"https://api.parse.com/1/classes/_User?limit=1000",
       headers:{
         "X-Parse-Application-Id": "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog", 
         "X-Parse-REST-API-Key": "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
       },
       type:"GET",
-      data:'where={"neighborhood": {"__type":"Pointer","objectId":"'+id+'","className":"Neighborhood"}}',
+      data:'where={"neighborhood": {"__type":"Pointer","className":"Neighborhood","objectId":"'+id+'"}}',
     }).success(function(lol){
       //thiss.setState({profile_pics: profile_pics})
-      _this.setState({ users: lol.results})
-    
+      console.log(lol)
+      thisss.setState({ users: lol.results})
     });
   },
 
@@ -51,15 +51,19 @@ var MembersDetails = React.createClass({
       users.push(<userRow users={temparray} imageWidth={this.props.imageWidth}/>)
     }
 
-
     //console.log(this.state.users)
     return (
+              <div className="panel panel-default">
+                <div className="panel-heading">
+                {this.state.users.length + ' Members'}
+                </div>
         <div style={{height:this.props.height, overflowY:'auto'}}>
               <table className="table table-responsive">
                 <tbody>
                     {users}
                 </tbody>
               </table>
+        </div>
         </div>
     )
   }
