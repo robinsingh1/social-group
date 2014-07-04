@@ -26,6 +26,11 @@ var NavBar = React.createClass({
             </ul>
           </li>
              */
+    if(location.hash == "")
+      navbar = <NavBarOptions />
+    else
+      navbar = ""
+
     return (
       <div>
         <nav className="navbar navbar-default" role="navigation">
@@ -44,9 +49,26 @@ var NavBar = React.createClass({
         </div>
 
         <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul className="nav navbar-nav">
-          <li><a href="#"></a></li>
-        </ul>
+          <ul className="nav navbar-nav">
+            <li><a href="#"></a></li>
+          </ul>
+          {navbar }
+            </div>
+          </div>
+        </nav>
+      </div>
+    );
+  },
+  changeNeighborhood: function(e) {
+    localStorage.currentNeighborhood = $(e.target).attr('id')
+    location.reload()
+  }
+});
+
+var NavBarOptions = React.createClass({
+  render: function() {
+    return (
+      <div>
         <ul className="nav navbar-nav navbar-right">
           <li className="dropdown">
             <a href="#" className="dropdown-toggle" data-toggle="dropdown">
@@ -64,14 +86,7 @@ var NavBar = React.createClass({
             </ul>
           </li>
         </ul>
-            </div>
-          </div>
-        </nav>
       </div>
     );
-  },
-  changeNeighborhood: function(e) {
-    localStorage.currentNeighborhood = $(e.target).attr('id')
-    location.reload()
   }
 });

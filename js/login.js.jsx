@@ -1,5 +1,4 @@
 /** @jsx React.DOM */
-
 var Login = React.createClass({
   componentDidMount: function(){
     $('body').css({'overflow':'hidden'})
@@ -55,7 +54,11 @@ var Login = React.createClass({
         <a href="#signup" className="btn btn-success btn-lg" style={{marginLeft:'250px',fontWeight:'bold'}}>Create New Account</a>
         <br /> <br /> <br />
         <br /> <br /> 
-        <div className="panel panel-default center-block" style={{width:"500px"}}>
+        <div id="login_error_alert" className="center-block alert alert-danger" style={{width:'500px',display:'none'}}>
+          <span id="login_error"></span>
+        </div>
+
+        <div className="panel panel-default center-block" style={{width:"500px",position:'relative',zIndex:'500'}}>
           <div className="panel-body">
             <h1 style={{textAlign:'center',fontWeight:"bold",marginTop:'5px',fontFamily:"museo-sans-rounded"}} className="text-success">Welcome Back!</h1>
             <br/>
@@ -66,8 +69,8 @@ var Login = React.createClass({
             </form>
           </div>
         </div>
-      </div>
      <img  style={imgStyle} src="http://static.memrise.com/accounts/img/auth/front.v1.png"/>
+      </div>
      </div>
     );
   },
@@ -90,6 +93,7 @@ var Login = React.createClass({
       }
     });
     */
+
     data = {'username':login_email,'password':login_pw}
     $.ajax({ 
       url: 'https://api.parse.com/1/login' ,
@@ -98,9 +102,17 @@ var Login = React.createClass({
         "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
       },
       type:'GET',
-      data: data
-    }).success(function(lol) {
-      console.log(lol)
+      data: data,
+      success: function(lol) {
+        console.log(lol)
+        location.href = "#"
+      },
+      error: function(error) {
+        console.log('error')
+        console.log(error)
+        $('#login_error').text(error.responseText)
+        $('#login_error_alert').show()
+      }
     });
   }
 });

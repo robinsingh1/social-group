@@ -25,23 +25,19 @@
     first_key = "aIHDo506A6fdlZ7YZB6n93EZQeBvV8wBFsArgIYB"
     second_key = "wWQnUcWjA7ARW2s5n6zSfv52ypp1d7PmyMSoLxDh"
     Parse.initialize(first_key, second_key)
-
     currentUser = localStorage.getItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser')
-/* Auth Leg
-    if (currentUser) {
-      //Parse.User.current().fetch() //refresh user
+    /* Auth  */
 
+    if (currentUser) {
       if(!JSON.parse(currentUser).completed_signup) 
         location.href = "#create_account"
       else if(!JSON.parse(currentUser).address_verified) 
         location.href = "#verification"
       else 
-        location.href = "/"             // Feed
-
+        location.href = "#"             // Feed
     } else {
       location.href = "#signup"
     }
-*/
 
   </script>
   <script type="text/javascript">

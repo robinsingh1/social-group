@@ -45,7 +45,7 @@ var CreateAccount = React.createClass({
           <span style={{display:'inline'}}>Repeat Password:</span> <input style={{width:'300px',display:'inline',marginLeft:'7px'}} type="password" className="form-control" placeholder=""/>
           </div>
           <br/>
-          <a href="#" className="btn btn-success"> Create My Account</a>
+          <a href="javascript:" onClick={this.createAccount} className="btn btn-success"> Create My Account</a>
           <br/>
           <br />
         </form>
@@ -58,6 +58,9 @@ var CreateAccount = React.createClass({
       </div>
 </div>
     );
+  },
+  createAccount: function() {
+    console.log('create account')
   }
 });
 

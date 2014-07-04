@@ -22,6 +22,15 @@ var Home = React.createClass({
     }
   },
 
+  componentWillMount: function() {
+    if(!JSON.parse(currentUser).completed_signup) 
+      location.href = "#create_account"
+    else if(!JSON.parse(currentUser).address_verified) 
+      location.href = "#verification"
+    else 
+      location.href = "#"             // Feed
+  },
+
   componentDidMount: function() {
     localStorage.currentUserId = "j9X362qr4t"
     currentUserId = "j9X362qr4t"
@@ -36,7 +45,7 @@ var Home = React.createClass({
           "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
         },
       }).success(function(lol){
-        thissss.setState({
+        the_this.setState({
           name: lol.neighborhood.name,
           id: lol.objectId,
           description: lol.neighborhood.description
