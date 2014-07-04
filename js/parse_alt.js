@@ -5,7 +5,7 @@ function persistPost(body) {
       user : {
         "__type"    : "Pointer",
         "className" : "_User",
-        "objectId"  : "j9X362qr4t", //Parse.User.current
+        "objectId"  : localStorage.currentUserId
       }, 
       neighborhood : {
         "__type"    : "Pointer",
@@ -17,7 +17,7 @@ function persistPost(body) {
       post_created_at_timestamp: ""+Math.round((new Date()).getTime() / 1000),
     }
 
-    if(body.trim() != ""){
+    if(body.trim() != "") {
       $.ajax({
         url: "https://api.parse.com/1/classes/Post",
         type: "POST",
@@ -29,8 +29,12 @@ function persistPost(body) {
         },
         data: JSON.stringify(data),
       });
-      data.user.first_name = "Robin"
-      data.user.last_name = "Singh"
+
+      currentUser = localStorage.getItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser')
+      currentUser = JSON.parse(currentUser)
+
+      data.user.first_name = currentUser.first_name
+      data.user.last_name = currentUser.last_name
       return data
     } 
 }

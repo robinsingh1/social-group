@@ -30,29 +30,30 @@ var Feed = React.createClass({
     currentPage = localStorage.currentPage + 1
     currentNeighborhood = localStorage.currentNeighborhood
     paging_url = "https://api.parse.com/1/classes/Post?limit=20&skip="+currentPage*20+"&include=user,comments,users_who_commented",
+
     $.ajax({ 
       url: paging_url ,
       headers : {
         "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
         "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
       },
-      data:'where={"neighborhood": {"__type":"Pointer","objectId":"'+currentNeighborhood+'","className":"Neighborhood"}}',
+      data: 'where={"neighborhood": {"__type":"Pointer","objectId":"'+currentNeighborhood+'","className":"Neighborhood"}}&order=-post_created_at_timestamp',
     }).success(function(lol) {
-      //console.log(lol.results)
-      if(lol.results.length == 0){
+      if(lol.results.length == 0) {
         $('#no_more_posts').show()
         localStorage.loadedAllPosts = true
+        localStorage.currentPage = localStorage.currentPage + 1
       }
         
       $('#the_progress_bar').hide()
       thiss.setState({posts: thiss.state.posts.concat(lol.results) })
-      localStorage.currentPage = localStorage.currentPage + 1
-      //localStorage.loaded = true
     })
   },
 
   componentWillReceiveProps: function(){
-    currentUserId = "j9X362qr4t"
+    currentUserId = localStorage.currentUserId
+    currentNeighborhood = localStorage.currentNeighborhood
+
     thiss = this;
     currentPage = localStorage.currentPage
     $.ajax({
@@ -61,7 +62,7 @@ var Feed = React.createClass({
         "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
         "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
       },
-      data:'where={"neighborhood": {"__type":"Pointer","objectId":"XzDHTk60bi","className":"Neighborhood"}}',
+      data:'where={"neighborhood": {"__type":"Pointer","objectId":"'+currentNeighborhood+'","className":"Neighborhood"}}&order=-post_created_at_timestamp',
       success: function(lol) {
         thiss.setState({ posts : lol.results })
       }
@@ -69,7 +70,6 @@ var Feed = React.createClass({
   },
 
   render: function(){
-    //console.log(this.state.posts)
     the_posts = []
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
     for(i=0;i<this.state.posts.length;i++){
@@ -91,7 +91,6 @@ var Feed = React.createClass({
                            fb_profile_pic={this.state.profile_pics[i]}
                            key={this.state.posts[i].objectId} />)
         }
-     *
     */
   },
 

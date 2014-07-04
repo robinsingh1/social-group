@@ -33,13 +33,13 @@ var Comment = React.createClass({
     return (
         <li className="list-group-item" style={commentStyle}>
           <div className="media" >
-            <a href="#" style={{padding:'0',width:'34px',marginBottom:'0',marginTop:'2px'}} 
+            <a href="javascript:" style={{padding:'0',width:'34px',marginBottom:'0',marginTop:'2px'}} 
               className="pull-left thumbnail">
               <img src={profile_pic} className="media-object" style={{borderRadius:'2px'}}/>
             </a>
           <div className="media-body">
             <h5 className="media-heading" style={{display:'inline',fontSize:'12px'}}>
-                <a href="#">{comment.comment_author_id}</a>
+                <a href="javascript:">{comment.comment_author_id}</a>
             </h5>
     <span style={{marginLeft:'10px',fontSize:'12px'}}>{comment.comment_body} </span>
               <br/>

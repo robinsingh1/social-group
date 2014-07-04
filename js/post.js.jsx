@@ -237,12 +237,13 @@ var CreateComment = React.createClass({
   },
 
   render: function(){
+    profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
     commentStyle = { backgroundColor : '#f5f5f5' }
     return (
       <li className="list-group-item" style={commentStyle}>
         <div className="media" >
-          <a href="#" style={{marginBottom:'0px',padding:'0',width:'34px'}} className="pull-left thumbnail">
-            <img src="https://pbs.twimg.com/profile_images/2103629538/twit.png" className="media-object" style={{borderRadius:'2px'}}/>
+          <a href="javascript:" style={{marginBottom:'0px',padding:'0',width:'34px'}} className="pull-left thumbnail">
+            <img src={profile_pic} className="media-object" style={{borderRadius:'2px'}}/>
           </a>
           <div className="media-body" style={comment}>
             <form>

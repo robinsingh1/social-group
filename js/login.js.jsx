@@ -120,6 +120,7 @@ var Login = React.createClass({
       success: function(lol) {
         localStorage.setItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser', JSON.stringify(lol))
         localStorage.currentNeighborhood = lol.neighborhood.objectId
+        localStorage.currentUserId = lol.objectId
         location.href = "#" 
       },
       error: function(error) {

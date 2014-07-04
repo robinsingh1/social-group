@@ -39,8 +39,7 @@ var Home = React.createClass({
   },
 
   componentDidMount: function() {
-    localStorage.currentUserId = "j9X362qr4t"
-    currentUserId = "j9X362qr4t"
+    currentUserId = localStorage.currentUserId
     the_this = this;
 
     if(typeof localStorage.currentNeighborhood == "undefined") {
