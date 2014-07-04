@@ -23,12 +23,19 @@ var Home = React.createClass({
   },
 
   componentWillMount: function() {
-    if(!JSON.parse(currentUser).completed_signup) 
-      location.href = "#create_account"
-    else if(!JSON.parse(currentUser).address_verified) 
-      location.href = "#verification"
-    else 
-      location.href = "#"             // Feed
+    $('body').css({'overflow':'auto'})
+    currentUser = localStorage.getItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser')
+
+    if (currentUser) {
+      if(!JSON.parse(currentUser).completed_signup) 
+        location.href = "#create_account"
+      else if(!JSON.parse(currentUser).address_verified) 
+        location.href = "#verification"
+      else 
+        location.href = "#"             // Feed
+    } else {
+      location.href = "#signup"
+    }
   },
 
   componentDidMount: function() {
@@ -72,7 +79,6 @@ var Home = React.createClass({
 
   render: function(){
     //<Categories /> //<MembersBox />
-    console.log(this.state)
     return (
       <div>
         <NavBar name={this.state.name}/>

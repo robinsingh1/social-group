@@ -4,6 +4,20 @@ var Login = React.createClass({
     $('body').css({'overflow':'hidden'})
     $('#bg').css({'margin-top':'-20px'})
   },
+
+  componentWillMount: function() {
+    currentUser = localStorage.getItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser')
+    if (currentUser) {
+      if(!JSON.parse(currentUser).completed_signup) 
+        location.href = "#create_account"
+      else if(!JSON.parse(currentUser).address_verified) 
+        location.href = "#verification"
+      else 
+        location.href = "#"             // Feed
+    } else {
+      
+    }
+  },
   
   render: function(){
 
@@ -104,8 +118,9 @@ var Login = React.createClass({
       type:'GET',
       data: data,
       success: function(lol) {
-        console.log(lol)
-        location.href = "#"
+        localStorage.setItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser', JSON.stringify(lol))
+        localStorage.currentNeighborhood = lol.neighborhood.objectId
+        location.href = "#" 
       },
       error: function(error) {
         console.log('error')

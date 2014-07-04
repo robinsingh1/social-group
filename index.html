@@ -22,13 +22,37 @@
 </head>
 <body class="" style="height:100%">
   <script type="text/javascript">
+    function update_current_user() {
+      var currentUser = localStorage.getItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser') 
+      var currentUser = JSON.parse(currentUser)
+      $.ajax({ 
+        url: 'https://api.parse.com/1/classes/_User/'+currentUser.objectId ,
+        headers : {
+          "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+          "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+        },
+        type:'GET',
+        success: function(lol) {
+          console.log('user updated')
+          localStorage.setItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser', JSON.stringify(lol))
+        },
+        error: function(error) {
+        }
+      })
+    }
+
     first_key = "aIHDo506A6fdlZ7YZB6n93EZQeBvV8wBFsArgIYB"
     second_key = "wWQnUcWjA7ARW2s5n6zSfv52ypp1d7PmyMSoLxDh"
     Parse.initialize(first_key, second_key)
+
     currentUser = localStorage.getItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser')
-    /* Auth  */
+    /* Auth */ 
 
     if (currentUser) {
+      // Update User With Each Reload
+      update_current_user()
+      console.log(currentUser)
+
       if(!JSON.parse(currentUser).completed_signup) 
         location.href = "#create_account"
       else if(!JSON.parse(currentUser).address_verified) 

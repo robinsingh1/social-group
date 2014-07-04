@@ -5,6 +5,20 @@ var Auth = React.createClass({
     $('body').css({'overflow':'hidden'})
     $('#bg').css({'margin-top':'-20px'})
   },
+
+  componentWillMount: function() {
+    currentUser = localStorage.getItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser')
+    if (currentUser) {
+      if(!JSON.parse(currentUser).completed_signup) 
+        location.href = "#create_account"
+      else if(!JSON.parse(currentUser).address_verified) 
+        location.href = "#verification"
+      else 
+        location.href = "#"             // Feed
+    } else {
+      location.href = "#signup"
+    }
+  },
   
   render: function(){
 

@@ -44,8 +44,7 @@ var NavBar = React.createClass({
         </button>
         <a className="navbar-brand" href="#">
         <i className="fa fa-home" />&nbsp; NeighborsCircle
-        - <h5 style={{display:'inline'}}>{this.props.name}</h5>
-        </a>
+        <h5 style={{display:'inline'}}>{(this.props.name) ? " - "+this.props.name : ""}</h5> </a>
         </div>
 
         <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -59,14 +58,14 @@ var NavBar = React.createClass({
       </div>
     );
   },
-  changeNeighborhood: function(e) {
-    localStorage.currentNeighborhood = $(e.target).attr('id')
-    location.reload()
-  }
 });
 
 var NavBarOptions = React.createClass({
   render: function() {
+    /*
+      <li><a href="#" id="XzDHTk60bi" onClick={this.changeNeighborhood}>Test Neighborhood</a></li>
+      <li><a href="#" id="RtBDGScY6d" onClick={this.changeNeighborhood}>Shandon Neighborhood</a></li>
+    */
     return (
       <div>
         <ul className="nav navbar-nav navbar-right">
@@ -82,11 +81,21 @@ var NavBarOptions = React.createClass({
             <a href="#" className="dropdown-toggle" data-toggle="dropdown">
             <i className="fa fa-cog" /> &nbsp;<b className="caret"></b></a>
             <ul className="dropdown-menu">
-              <li><a href="#">Logout</a></li>
+              <li><a href="javascript:" onClick={this.logout}>Logout</a></li>
             </ul>
           </li>
         </ul>
       </div>
     );
+  },
+  logout: function() {
+    // logout 
+    console.log('logout')
+    localStorage.clear();
+    location.reload()
+  },
+  changeNeighborhood: function(e) {
+    localStorage.currentNeighborhood = $(e.target).attr('id')
+    location.reload()
   }
 });
