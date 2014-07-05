@@ -20,7 +20,7 @@ var Comment = React.createClass({
     if(typeof comment.users_who_commented == "undefined")
       comment.users_who_commented = {}
 
-    formatted_date = moment.utc(comment.comment_date).format("MMMM Do [at] h:mm a")
+    formatted_date = moment.unix(comment.comment_date).format("MMMM Do [at] h:mm a")
     //console.log(formatted_date)
 
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"

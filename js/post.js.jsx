@@ -34,10 +34,12 @@ var ParsePost = React.createClass({
   addComment: function(blah, body) {
     var comments = this.state.comments, users = this.state.users;
 
+    currentUser = JSON.parse(localStorage.getItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser'))
+    
     new_comment = {
-      comment_author_id : "Robin Singh",
+      comment_author_id : currentUser.first_name + " "  + currentUser.last_name,
       comment_body : body,
-      comment_date : new Date().getTime(),
+      comment_date : Math.round((new Date()).getTime() / 1000),
       likes_link: "no_likes",
       key: this.makeid(),
       user_likes: []
