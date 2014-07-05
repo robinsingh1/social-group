@@ -103,7 +103,8 @@ var ParsePost = React.createClass({
 
     if(typeof post.user_likes != "undefined")
       if(post.user_likes.length > 0)
-        show_likes = <LikesAndSeens likes = {this.state.user_likes} />
+        show_likes = <LikesAndSeens likes = {this.state.user_likes} liked={this.state.liked}/>
+
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
     tstamp = post.post_created_at_timestamp
     tstamp = moment.unix(tstamp).format("MMMM Do [at] h:mm a")
@@ -208,11 +209,22 @@ var LikesAndSeens = React.createClass({
     likes = this.props.likes
     if(typeof likes == "undefined")
       likes = []
+
+    if(this.props.liked && likes.length > 1)
+      likes_text = "You and " + (likes.length - 1) + " other people"
+    else if(this.props.liked && likes.length == 2)
+      likes_text = "You and " + likes.length + " other person"
+    else if(this.props.liked && likes.length == 1)
+      likes_text = "You "
+    else
+      likes_text = likes.length + " people"
+
+
     return (
       <div>
         <li className="list-group-item" style={comment}>
           <h6 style={{display:'inline'}}> <a href="#" style={{fontSize:'13px'}}>
-          <i className="fa fa-thumbs-up text-primary" />&nbsp; {likes.length} people</a>&nbsp; <span>like this.</span> </h6>
+          <i className="fa fa-thumbs-up text-primary" />&nbsp;{likes_text}</a>&nbsp; <span>like this.</span> </h6>
 
           <div style={{float:'right',display:'none'}}> <h6 style={{display:'inline'}}><a href="#" >
           <i className="fa fa-check text-primary" /> &nbsp; Seen by 29</a></h6>

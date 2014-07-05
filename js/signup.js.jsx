@@ -54,7 +54,6 @@ var Auth = React.createClass({
       fontSize:'20px'
     }
     /*
-
         <div id="sign_up" style={signupDivStyle}>
           <a href="#" style={signupBtn} className="btn btn-primary">{'GET STARTED - ITS FREE'}</a>
         </div>
@@ -116,6 +115,12 @@ var Auth = React.createClass({
     user.set("postal_code", postal_code);
     user.set("completed_signup", false);
     user.set("address_verification", false);
+    /*
+     * Neighborhood
+     * -----------------------------------------------
+     * 1. Set default neighborhood to Test Neighborhood ? 
+     *
+     */
      
     user.signUp(null, {
       success: function(user) {

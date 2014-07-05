@@ -31,6 +31,10 @@ var NavBar = React.createClass({
     else
       navbar = ""
 
+    // TODO 
+    // --------
+    // Show neighborhoods that a user is a part of
+    
     return (
       <div>
         <nav className="navbar navbar-default" role="navigation">
