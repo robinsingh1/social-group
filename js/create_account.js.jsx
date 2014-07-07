@@ -61,6 +61,9 @@ var CreateAccount = React.createClass({
   },
   createAccount: function() {
     console.log('create account')
+    // TODO
+    // -------------------------
+    // Add Introduction paragraph
   }
 });
 

@@ -34,21 +34,25 @@ var NavBar = React.createClass({
     // TODO 
     // --------
     // Show neighborhoods that a user is a part of
-    
+    // 
     return (
       <div>
-        <nav className="navbar navbar-default" role="navigation">
+        <nav className="navbar navbar-default navbar-fixed-top" role="navigation" style={{'backgroundColor':'#5cb85c',border:'0',borderRadius:'0'}}>
         <div className="container-fluid">
-        <div className="navbar-header">
+        <div className="navbar-header" style={{marginTop:'-4px'}}>
         <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span className="sr-only">Toggle navigation</span>
-        <span className="icon-bar"></span>
-        <span className="icon-bar"></span>
-        <span className="icon-bar"></span>
+          <span className="sr-only">Toggle navigation</span>
+          <span className="icon-bar"></span>
+          <span className="icon-bar"></span>
+          <span className="icon-bar"></span>
         </button>
-        <a className="navbar-brand" href="#">
-        <i className="fa fa-home" />&nbsp; NeighborsCircle
-        <h5 style={{display:'inline'}}>{(this.props.name) ? " - "+this.props.name : ""}</h5> </a>
+        <a className="navbar-brand" href="#" style={{color:'#306d30'}}>
+          <span style={{fontSize:'30px'}}>
+          <i className="fa fa-home"/>
+          <span style={{fontFamily:'museo-sans-rounded',marginLeft:'7px'}}>NeighborsCircle</span>
+          </span>
+          
+        </a>
         </div>
 
         <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

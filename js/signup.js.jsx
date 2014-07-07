@@ -106,7 +106,7 @@ var Auth = React.createClass({
     console.log(data)
     localStorage.setItem('user_location', address + " " + postal_code)
 
-    
+     
     var user = new Parse.User();
     user.set("username", $('#email_address').val());
     user.set("password", "testtest");
@@ -115,7 +115,11 @@ var Auth = React.createClass({
     user.set("postal_code", postal_code);
     user.set("completed_signup", false);
     user.set("address_verification", false);
-    /*
+    user.set("neighborhood" , [{"__type":"Pointer","className":"Neighborhood","objectId":"XzDHTk60bi"}] )
+    /* TODO
+     * ---------------------------------------
+     * Password has to be added to this screen
+     *
      * Neighborhood
      * -----------------------------------------------
      * 1. Set default neighborhood to Test Neighborhood ? 
