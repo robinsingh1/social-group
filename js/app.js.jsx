@@ -58,7 +58,7 @@ var Home = React.createClass({
         })
       })
     } else {
-      console.log(localStorage.currentNeighborhood)
+      //console.log(localStorage.currentNeighborhood)
       $.ajax({
         url: "https://api.parse.com/1/classes/Neighborhood/"+localStorage.currentNeighborhood,
         headers : {
@@ -66,7 +66,7 @@ var Home = React.createClass({
           "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
         },
       }).success(function(lol){
-        console.log(lol)
+        //console.log(lol)
         the_this.setState({
           name: lol.name,
           id: lol.objectId,
@@ -141,18 +141,88 @@ var AboutNeighborhood = React.createClass({
 });
 
 var Categories = React.createClass({
+  getInitialState: function() {
+    // Get Counts Of Neighborhood Posts
+    return {
+      classifieds : "",
+      free_items : "",
+      recommendations : "",
+      crime_and_safety : "",
+      lost_and_found : "",
+      events : ""
+    }
+  },
+
+  componentDidMount : function() {
+    tags = ["Classifieds","Free Items", "Recommendations", "Crime and Safety",
+              "Lost and Found", "Events"]
+    tags = ["classifieds","free_items", "recommendations", "crime_and_safety",
+              "lost_and_found", "events"]
+    cat_this = this;
+    counts = []
+    for(i=0;i<tags.length;i++){
+      neighborhood = {
+        "neighborhood" : {
+          "__type" : "Pointer",
+          "className" : "Neighborhood",
+          "objectId" : localStorage.currentNeighborhood
+        },
+        "tags": tags[i]
+      }
+
+      $.ajax({
+        url: "https://api.parse.com/1/classes/Post",
+        type: "GET",
+        dataType: "JSON",
+        contentType: "application/json",
+        async: false,
+        headers : {
+          "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
+          "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
+        },
+        //data: "where="+JSON.stringify(neighborhood)+"&tags=['Classifieds']",
+        //data: "where={__type:'Pointer',className:'Neighborhood',objectId:'RtBDGScY6d'}",
+        data: "where="+JSON.stringify(neighborhood)+"&count=1",
+        success: function(lol){
+          counts.push(lol.count)
+          if(counts.length == 6) {
+            console.log(counts)
+            cat_this.setState({
+              classifieds      :  counts[0],
+              free_items       :  counts[1], 
+              recommendations  :  counts[2], 
+              crime_and_safety :  counts[3],
+              lost_and_found   :  counts[4], 
+              events           :  counts[5] 
+            })
+          }
+        },
+        error: function(error){
+          console.log('error')
+        }
+      });
+    }
+  },
+
   render: function(){
+    classifieds = this.state.classifieds
+    free_items = this.state.free_items
+    recommendations = this.state.recommendations
+    crime_and_safety = this.state.crime_and_safety
+    lost_and_found = this.state.lost_and_found
+    events = this.state.events
+
     menuStyle = {fontSize:'12px',fontWeight:'500'}
+    //console.log(classifieds)
+    console.log(this.state)
     return (
       <ul className="nav nav-pills nav-stacked">
-        <li style={menuStyle}> <a href="#"><i className="fa fa-tags" /> &nbsp; Classifieds<span className="badge" style={{float:'right'}}>&nbsp;</span></a>
-        </li>
-        
-        <li style={menuStyle}><a href="#"><i className="fa fa-cube" />&nbsp; Free Items<span className="badge" style={{float:'right'}}>98</span></a></li>
-        <li style={menuStyle}><a href="#"><i className="fa fa-comments" />&nbsp; Recommendations<span className="badge" style={{float:'right'}}>98</span></a></li>
-        <li style={menuStyle}><a href="#"><i className="fa fa-taxi" />&nbsp; {'Crime & Safety'}<span className="badge" style={{float:'right'}}>98</span></a></li>
-        <li style={menuStyle}><a href="#"><i className="fa fa-crosshairs" /> &nbsp; {'Lost & Found'}<span className="badge" style={{float:'right'}}>98</span></a></li>
-        <li style={menuStyle}><a href="#"><i className="fa fa-calendar-o" /> &nbsp;{'Events'}<span className="badge" style={{float:'right'}}>98</span></a></li>
+        <li style={menuStyle}> <a href="#"><i className="fa fa-tags" /> &nbsp; Classifieds<span className="badge" style={{float:'right'}}>{classifieds}</span></a> </li>
+        <li style={menuStyle}><a href="#"><i className="fa fa-cube" />&nbsp; Free Items<span className="badge" style={{float:'right'}}>{free_items}</span></a></li>
+        <li style={menuStyle}><a href="#"><i className="fa fa-comments" />&nbsp; Recommendations<span className="badge" style={{float:'right'}}>{recommendations}</span></a></li>
+        <li style={menuStyle}><a href="#"><i className="fa fa-taxi" />&nbsp; {'Crime & Safety'}<span className="badge" style={{float:'right'}}>{crime_and_safety}</span></a></li>
+        <li style={menuStyle}><a href="#"><i className="fa fa-crosshairs" /> &nbsp; {'Lost & Found'}<span className="badge" style={{float:'right'}}>{lost_and_found}</span></a></li>
+        <li style={menuStyle}><a href="#"><i className="fa fa-calendar-o" /> &nbsp;{'Events'}<span className="badge" style={{float:'right'}}>{events}</span></a></li>
       </ul>
     );
   }

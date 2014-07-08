@@ -8,11 +8,11 @@ var ParsePost = React.createClass({
   getInitialState: function(){
     var postKeys = [], commentKeys = [], p = this.props.post;
 
-    comments = (typeof p.comments == "undefined") ? [] : p.comments
-    u = (typeof p.users_who_commented == "undefined") ? [] : p.users_who_commented
-    user_likes = (typeof p.user_likes == "undefined") ? [] : p.user_likes
+    comments = (p.comments) ? p.comments : []
+    u = (p.users_who_commented) ? p.users_who_commented : []
+    user_likes = (p.user_likes) ? p.user_likes : []
     postTags = (p.tags) ? p.tags : []
-    console.log(postTags)
+    
 
     currentUser = {objectId:'j9X362qr4t'}
     currentUserLiked = _.where(user_likes, currentUser).length > 0
@@ -110,11 +110,13 @@ var ParsePost = React.createClass({
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
     tstamp = post.post_created_at_timestamp
     tstamp = moment.unix(tstamp).format("MMMM Do [at] h:mm a")
-
+    tags = (this.state.tags[0]) ? this.state.tags[0] : ""
+    tags = tags.replace('_',' ')
+    tags = tags.charAt(0).toUpperCase() + tags.slice(1);
     return (
       <div>
         <div className="panel panel-default">
-          <span className="label label-success" style={{position:'absolute',right:'20px',marginTop:'5px'}}>{this.state.tags[0]}</span>
+          <span className="label label-success" style={{position:'absolute',right:'20px',marginTop:'5px'}}>{tags}</span>
           <PostAuthor date={tstamp} 
                       author={post.user} 
                       pic={profile_pic}/>

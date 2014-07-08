@@ -24,7 +24,7 @@ var MembersDetails = React.createClass({
 
   componentDidMount: function(){
     id = this.props.neighborhood
-    console.log(id)
+    //console.log(id)
     thisss = this;
 
     $.ajax({
@@ -37,7 +37,7 @@ var MembersDetails = React.createClass({
       data:'where={"neighborhood": {"__type":"Pointer","className":"Neighborhood","objectId":"'+id+'"}}',
     }).success(function(lol){
       //thiss.setState({profile_pics: profile_pics})
-      console.log(lol)
+      //console.log(lol)
       thisss.setState({ users: lol.results})
     });
   },

@@ -96,6 +96,10 @@ var Feed = React.createClass({
   },
 
   createPost: function(body, tag){
+    tag = tag.replace('&','and')
+    tag = tag.toLowerCase()
+    tag = tag.replace(' ','_')
+
     tag = [tag]
 
     if(tag == "")
@@ -231,9 +235,14 @@ var createPost = React.createClass({
   }
   // <a href="#" onClick={this.fetch} className="btn btn-primary btn-xs" style={{width:'100px',marginRight:'10px'}}>Upload Image</a>
   // <a href="#" style={tagStyle} className="btn-xs btn btn-primary" data-toggle="dropdown" ><i className="fa fa-tag" /></a>
+    cancel_tag = (this.state.tag) ? 'block' : 'none'
+    //console.log(cancel_tag)
     return (
       <div className="panel panel-default">
-        <span className="label label-success" style={{position:'absolute',top:'10px',marginLeft:'25px',marginBottom:'5px'}}>{this.state.tag}</span>
+        <span className="label label-success" style={{position:'absolute',top:'10px',marginLeft:'25px',marginBottom:'5px',display:cancel_tag,color:'white'}}>{this.state.tag}
+          &nbsp;&nbsp;&nbsp;
+          <a href="#" style={{color:'white'}}onClick={this.removeTag}><i className="fa fa-times"/></a>
+        </span>
         <div className="panel-body">
         <div className="dropdown">
         <a href="#" style={tagStyle} className="btn-xs btn btn-primary" data-toggle="dropdown" ><i className="fa fa-tag" /></a>
@@ -258,6 +267,10 @@ var createPost = React.createClass({
         </div>
       </div>
     );
+  },
+  removeTag: function(e) {
+    e.preventDefault()
+    this.setState({tag: ""})
   },
   createTag: function(e) {
     e.preventDefault()
