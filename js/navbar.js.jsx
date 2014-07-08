@@ -79,7 +79,7 @@ var NavBarOptions = React.createClass({
         <ul className="nav navbar-nav navbar-right">
           <li className="dropdown">
             <a href="#" style={{color:'#306d30'}} className="dropdown-toggle" data-toggle="dropdown">
-            <i className="fa fa-cubes" /> &nbsp;<b className="caret"></b></a>
+            <i className="fa fa-cubes" /> &nbsp;Change Neighborhood &nbsp; <b className="caret"></b></a>
             <ul className="dropdown-menu">
               <li><a href="#" id="XzDHTk60bi" onClick={this.changeNeighborhood}>Test Neighborhood</a></li>
               <li><a href="#" id="RtBDGScY6d" onClick={this.changeNeighborhood}>Shandon Neighborhood</a></li>
