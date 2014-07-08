@@ -11,7 +11,8 @@ var ParsePost = React.createClass({
     comments = (typeof p.comments == "undefined") ? [] : p.comments
     u = (typeof p.users_who_commented == "undefined") ? [] : p.users_who_commented
     user_likes = (typeof p.user_likes == "undefined") ? [] : p.user_likes
-    //console.log(user_likes)
+    postTags = (p.tags) ? p.tags : []
+    console.log(postTags)
 
     currentUser = {objectId:'j9X362qr4t'}
     currentUserLiked = _.where(user_likes, currentUser).length > 0
@@ -19,7 +20,8 @@ var ParsePost = React.createClass({
     return { comments   : comments, 
              users      : u,
              user_likes : user_likes,
-             liked      : currentUserLiked
+             liked      : currentUserLiked,
+             tags:      postTags
     }
   },
 
@@ -108,9 +110,11 @@ var ParsePost = React.createClass({
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
     tstamp = post.post_created_at_timestamp
     tstamp = moment.unix(tstamp).format("MMMM Do [at] h:mm a")
+
     return (
       <div>
         <div className="panel panel-default">
+          <span className="label label-success" style={{position:'absolute',right:'20px',marginTop:'5px'}}>{this.state.tags[0]}</span>
           <PostAuthor date={tstamp} 
                       author={post.user} 
                       pic={profile_pic}/>

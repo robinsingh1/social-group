@@ -73,9 +73,10 @@ var Feed = React.createClass({
     the_posts = []
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
     for(i=0;i<this.state.posts.length;i++){
-      the_posts.push(<ParsePost post={this.state.posts[i]} 
-                       fb_profile_pic={profile_pic}
-                       key={this.state.posts[i].objectId} />)
+      the_posts.push(<ParsePost  post={this.state.posts[i]} 
+                                 fb_profile_pic={profile_pic}
+                                 key={this.state.posts[i].objectId} 
+                                 tags={this.state.posts[i].tags} />)
     }
 
     return (
@@ -94,8 +95,14 @@ var Feed = React.createClass({
     */
   },
 
-  createPost: function(body){
-    data = persistPost(body)
+  createPost: function(body, tag){
+    tag = [tag]
+
+    if(tag == "")
+      tag = []
+
+
+    data = persistPost(body, tag)
     tmp = this.state.posts
     tmp.unshift(data)
     this.setState({posts: tmp})
@@ -193,6 +200,9 @@ var createPost = React.createClass({
           </ul>
         </div>
 */
+  getInitialState: function() {
+    return {tag : "" } 
+  },
   componentDidMount: function(){
     //console.log($(this.getDOMNode()).find('input'))
   },
@@ -207,7 +217,8 @@ var createPost = React.createClass({
     outline: 'none',
     border:'none !important',
     boxShadow:'none !important',
-    resize:'none'
+    resize:'none',
+    marginTop:'15px'
   }
   tagStyle={
     position: 'absolute',
@@ -222,14 +233,17 @@ var createPost = React.createClass({
   // <a href="#" style={tagStyle} className="btn-xs btn btn-primary" data-toggle="dropdown" ><i className="fa fa-tag" /></a>
     return (
       <div className="panel panel-default">
+        <span className="label label-success" style={{position:'absolute',top:'10px',marginLeft:'25px',marginBottom:'5px'}}>{this.state.tag}</span>
         <div className="panel-body">
         <div className="dropdown">
+        <a href="#" style={tagStyle} className="btn-xs btn btn-primary" data-toggle="dropdown" ><i className="fa fa-tag" /></a>
           <ul className="dropdown-menu" style={{position:'absolute',left:'322px',top:'11px' }}>
-            <li><a href="#" style={dropdown}>Classifieds</a></li>
-            <li><a href="#" style={dropdown}>Free Items</a></li>
-            <li><a href="#" style={dropdown}>Recommendations</a></li>
-            <li><a href="#" style={dropdown}>{'Crime & Safety'}</a></li>
-            <li><a href="#" style={dropdown}>{'Lost & Found'}</a></li>
+            <li><a href="#" style={dropdown} onClick={this.createTag} >Classifieds</a></li>
+            <li><a href="#" style={dropdown} onClick={this.createTag} >Free Items</a></li>
+            <li><a href="#" style={dropdown} onClick={this.createTag} >Recommendations</a></li>
+            <li><a href="#" style={dropdown} onClick={this.createTag} >{'Crime & Safety'}</a></li>
+            <li><a href="#" style={dropdown} onClick={this.createTag} >{'Lost & Found'}</a></li>
+            <li><a href="#" style={dropdown} onClick={this.createTag} >{'Events'}</a></li>
           </ul>
         </div>
           <form onSubmit={this.createPost}>
@@ -245,9 +259,17 @@ var createPost = React.createClass({
       </div>
     );
   },
+  createTag: function(e) {
+    e.preventDefault()
+    console.log(e.target)
+
+    this.setState({tag: $(e.target).text()})
+  },
+
   createPost: function(e){
     e.preventDefault()
-    this.props.createPost($('textarea').val())
+    this.props.createPost($('textarea').val(), this.state.tag)
     $('textarea').val('')
+    this.setState({tag: ""})
   }
 });

@@ -90,13 +90,13 @@ var Home = React.createClass({
         <NavBar name={this.state.name}/>
         <div className="container" style={{width:'auto',marginTop:'70px'}}>
           <div className="row">
-            <div className="col-md-3 well" style={sideMenu}>
+            <div className="col-md-3 well col-sm-5" style={sideMenu}>
               <h5 style={{display:'inline',fontSize:'18px'}} className="lead">{this.state.name}</h5>
               <br/>
               <br/>
               <Categories />        
             </div>
-            <div className="col-md-offset-5 col-md-6">
+            <div className="col-md-offset-5 col-md-6 col-sm-offset-5 col-sm-6">
               <Feed />
               <div id="the_progress_bar" style={{display:'none'}}>
                 <div className="progress progress-striped active">
@@ -109,7 +109,7 @@ var Home = React.createClass({
                   <div style={{textAlign:'center'}}>There are no more posts to load.</div>
                 </div>
             </div>
-            <div className="col-md-offset-1 col-md-4"> 
+            <div className="col-md-offset-1 col-md-4 col-sm-offset-1 col-sm-4"> 
                 <MembersDetails facesPerRow={3} 
                                 imageWidth={'50px'} 
                                 height={'300px'}
@@ -145,7 +145,7 @@ var Categories = React.createClass({
     menuStyle = {fontSize:'12px',fontWeight:'500'}
     return (
       <ul className="nav nav-pills nav-stacked">
-        <li style={menuStyle}> <a href="#"><i className="fa fa-tags" /> &nbsp; Classifieds<span className="badge" style={{float:'right'}}>98</span></a>
+        <li style={menuStyle}> <a href="#"><i className="fa fa-tags" /> &nbsp; Classifieds<span className="badge" style={{float:'right'}}>&nbsp;</span></a>
         </li>
         
         <li style={menuStyle}><a href="#"><i className="fa fa-cube" />&nbsp; Free Items<span className="badge" style={{float:'right'}}>98</span></a></li>

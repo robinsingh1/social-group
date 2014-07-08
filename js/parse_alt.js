@@ -1,4 +1,4 @@
-function persistPost(body) {
+function persistPost(body, tag) {
   console.log('persist post')
     data = {
       body   : body,
@@ -12,12 +12,15 @@ function persistPost(body) {
         "className" : "Neighborhood",
         "objectId"  : localStorage.currentNeighborhood, //Parse.User.current
       }, 
+      tags: tag,
       user_likes : [],
       message: body,
       post_created_at_timestamp: ""+Math.round((new Date()).getTime() / 1000),
+      objectId: '',
     }
 
     if(body.trim() != "") {
+      delete data.objectId 
       $.ajax({
         url: "https://api.parse.com/1/classes/Post",
         type: "POST",
