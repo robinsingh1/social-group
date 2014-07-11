@@ -1,9 +1,10 @@
 /** @jsx React.DOM */
 
-var Auth = React.createClass({
+var FBAuth = React.createClass({
   componentDidMount: function(){
     $('body').css({'overflow':'hidden'})
     $('#bg').css({'margin-top':'-20px'})
+    console.log('fb auth')
   },
 
   componentWillMount: function() {
@@ -50,24 +51,33 @@ var Auth = React.createClass({
     return (
       <div>
       <div id="bg" className=""style={{backgroundColor:'#fffae9',height:'100%', width:'100%',position:'absolute',zIndex:'1'}}>
-        <h1 style={{fontFamily:'museo-sans-rounded',color:'#FEB101',paddingTop:'50px',paddingLeft:'100px',display:'inline-block'}}>
-          <i className="fa fa-home" />
-          <span style={{marginLeft:'5px'}}>NeighborsCircle</span>
-        </h1> <span style={{marginLeft:'5px',fontSize:'16px',fontFamily:'proxima-nova-soft',color:'#FEB101'}}>{'The private social network for your neighborhood.'}</span>
-        <a href="#login" className="btn btn-success btn-lg" style={{marginLeft:'300px',fontWeight:'bold'}}>Log In</a>
+
+      <br/>
+      <div className="container">
+      <div className="row">
+        <div className="col-md-6">
+        <h1 style={{fontFamily:'museo-sans-rounded',color:'#FEB101'}}>
+            <i className="fa fa-home" /> <span style={{marginLeft:'5px'}}>NeighborsCircle</span>
+          </h1> 
+        </div>
+        <div className="col-md-6">
+          <span style={{marginLeft:'5px',fontSize:'16px',fontFamily:'proxima-nova-soft',color:'#FEB101'}}>{'The private social network for your neighborhood.'}</span>
+        </div>
+        </div>
+    </div>
+
         <br /> <br /> <br />
         <br /> <br /> 
-        <div className="panel panel-default center-block" style={{width:"500px",position:'relative',zIndex:'500'}}>
-          <div className="panel-body">
-            <h1 style={{fontWeight:"bold",marginTop:'5px',fontFamily:"museo-sans-rounded"}} className="text-success">Find Your Neighborhood</h1>
+
+        <div className="container">
+        <div className="col-md-offset-4 col-md-8">
+            <br/> <br/>
+            <br/> <br/>
+        <div className="panel panel-default" style={{position:'relative',zIndex:'500'}}>
+            <a onClick={this.facebookLogin} className="btn btn-success" style={{width:'100%'}}><span style={{fontWeight:"bold",fontSize:'25px',textAlign:'center',marginTop:'5px',fontFamily:"museo-sans-rounded"}} className="">Find Your Neighborhood</span></a>
             <br/>
-            <form onSubmit={this.createUser}>
-            <input id="address" placeholder="Please Enter Your Address including Apartment Number" className="form-control" style={{marginBottom:'10px'}}/>
-            <input id="email_address" placeholder="Please Enter Your Email Address" className="form-control" style={{marginBottom:'10px'}}/>
-            <input id="postal_code" placeholder="Please Enter Your Postal Code" className="form-control" style={{marginBottom:'10px'}}/>
-            <a href="#" onClick={this.createUser} className="btn btn-success btn-lg" style={{width:'100%',fontWeight:'bold'}}>Get Started Today</a>
-            </form>
-          </div>
+        </div>
+        </div>
         </div>
      <img  style={imgStyle} src="http://static.memrise.com/accounts/img/auth/front.v1.png"/>
       </div>
@@ -75,6 +85,18 @@ var Auth = React.createClass({
     );
   },
 
+  getCurrentUser: function(){
+    FB.api('/me', function(response) {
+        alert ("Welcome " + response.name + ": Your UID is " + response.id); 
+    });
+  },
+
+  facebookLogin: function() {
+    //location.href = "https://www.facebook.com/dialog/oauth?client_id=465891630221399&redirect_uri=http://nextdoor.parseapp.com"
+    location.href = "https://www.facebook.com/dialog/oauth?client_id=465891630221399&redirect_uri=http://nextdoor.parseapp.com&response_type=token"
+  },
+
+  /*
   createUser: function(e){
     // Thanks for signing up for neighborscircle email
     // Check if address is valid
@@ -105,7 +127,7 @@ var Auth = React.createClass({
     user.set("completed_signup", false);
     user.set("address_verification", false);
     user.set("neighborhood" , [{"__type":"Pointer","className":"Neighborhood","objectId":"XzDHTk60bi"}] )
-    /* TODO
+      TODO
      * ---------------------------------------
      * Password has to be added to this screen
      *
@@ -113,7 +135,6 @@ var Auth = React.createClass({
      * -----------------------------------------------
      * 1. Set default neighborhood to Test Neighborhood ? 
      *
-     */
      
     user.signUp(null, {
       success: function(user) {
@@ -126,4 +147,5 @@ var Auth = React.createClass({
       }
     });
   }
+  */
 });

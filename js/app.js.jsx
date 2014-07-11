@@ -18,32 +18,39 @@ var Home = React.createClass({
     return {
       name : "",
       id : neighborhood,
-      description : ""
+      description : "",
+      screen : this.getScreenSize()
     }
+  },
+
+  getScreenSize: function(){
+    //console.log($(window).width())
+    if($(window).width() > 765)
+      screen = "desktop"
+    else 
+      screen = "mobile"
+    
+    //console.log(screen)
+    return screen
   },
 
   componentWillMount: function() {
     $('body').css({'overflow':'auto'})
-    currentUser = localStorage.getItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser')
-
-    if (currentUser) {
-      if(!JSON.parse(currentUser).completed_signup) 
-        location.href = "#create_account"
-      else if(!JSON.parse(currentUser).address_verified) 
-        location.href = "#verification"
-      else 
-        location.href = "#"             // Feed
-    } else {
-      location.href = "#signup"
-    }
+    check_fb_auth()
   },
 
   componentDidMount: function() {
+    if(this.state.screen == "mobile")
+      $('.navbar-toggle').hide()
+
     currentUserId = localStorage.currentUserId
     the_this = this;
 
+    $(window).resize(function() {
+      the_this.setState({screen: the_this.getScreenSize() })
+    });
+    
     if(typeof localStorage.currentNeighborhood == "undefined") {
-      console.log('undefined')
       $.ajax({
         url: "https://api.parse.com/1/classes/_User/"+currentUserId+'?include=neighborhood',
         headers : {
@@ -76,28 +83,47 @@ var Home = React.createClass({
     }
   },
 
+  toggleMenu: function() {
+    if($('#navbar').css('margin-left')=='200px'){
+      $('#navbar').css('margin-left','0px')
+      $('#feed').css('margin-left','0px')
+      $('#sideMenu').hide()
+    } else{
+      $('#navbar').css('margin-left','200px')
+      $('#feed').css('margin-left','200px')
+      $('#sideMenu').show()
+    }
+  },
+
   render: function(){
     // //<MembersBox />
     // <AboutNeighborhood description={this.state.description}/>
+
     sideMenu = {
-      top: '50px',
+      top: '0px',
       borderRadius: '0px',
       height: '100%',
-      position: 'fixed'
+      position: 'fixed',
+      width:'200px',
+      padding:'0',
+      paddingTop:'50px',
+      display: (this.state.screen == "mobile") ? "none" : "show"
     }
+
+              //<ParseFeed />
     return (
       <div>
-        <NavBar name={this.state.name}/>
+      <div id="app">
+        <NavBar name={this.state.name} screen={this.state.screen} toggleMenu={this.toggleMenu}/>
         <div className="container" style={{width:'auto',marginTop:'70px'}}>
           <div className="row">
-            <div className="col-md-3 well col-sm-5" style={sideMenu}>
+            <div className="col-md-3 well col-sm-5" id="sideMenu" style={sideMenu}>
               <h5 style={{display:'inline',fontSize:'18px'}} className="lead">{this.state.name}</h5>
-              <br/>
-              <br/>
+              <br/> <br/>
               <Categories />        
             </div>
-            <div className="col-md-offset-5 col-md-6 col-sm-offset-5 col-sm-6">
-              <Feed />
+            <div className="col-md-offset-5 col-md-6 col-sm-offset-5 col-sm-6" id="feed">
+              <FacebookFeed />
               <div id="the_progress_bar" style={{display:'none'}}>
                 <div className="progress progress-striped active">
                   <div className="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style={{width:"100%"}}>
@@ -110,13 +136,15 @@ var Home = React.createClass({
                 </div>
             </div>
             <div className="col-md-offset-1 col-md-4 col-sm-offset-1 col-sm-4"> 
-                <MembersDetails facesPerRow={3} 
+            { (this.state.screen == "desktop") ? <MembersDetails facesPerRow={3} 
                                 imageWidth={'50px'} 
                                 height={'300px'}
-                                neighborhood={this.state.id} />
+                                neighborhood={this.state.id} /> : ""
+            }
             </div>
           </div>
         </div>
+      </div>
       </div>
     )
   }
@@ -234,14 +262,15 @@ var Workspace = Backbone.Router.extend({
 
   routes: {
     "": "main",
-    "members" : "members",
+    "members"             : "members",
     "request_membership" : "request_membership",
-    "signup": "signup",
-    "newsignup": "newsignup",
-    "offline": "offline",
+    "signup"        : "signup",
+    "newsignup"     : "newsignup",
+    "offline"       : "offline",
     "create_account": "create_account",
-    "verification": "verification",
-    "login": "login",
+    "verification"  : "verification",
+    "login"         : "login",
+    "choose_group"  :"ChooseGroup",
   },
 
   main: function() {
@@ -268,7 +297,8 @@ var Workspace = Backbone.Router.extend({
   },
 
   signup: function(){
-    React.renderComponent(Auth(), document.getElementById('content'));
+    //React.renderComponent(Auth(), document.getElementById('content'));
+    React.renderComponent(FBAuth(), document.getElementById('content'));
   },
 
   profile: function(){
@@ -289,6 +319,10 @@ var Workspace = Backbone.Router.extend({
 
   login: function(){
     React.renderComponent(Login(), document.getElementById('content'));
+  },
+
+  ChooseGroup: function() {
+    React.renderComponent(ChooseGroup(), document.getElementById('content'));
   },
 
 

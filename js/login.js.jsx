@@ -6,17 +6,7 @@ var Login = React.createClass({
   },
 
   componentWillMount: function() {
-    currentUser = localStorage.getItem('Parse/N85QOkteEEQkuZVJKAvt8MVes0sjG6qNpEGqQFVJ/currentUser')
-    if (currentUser) {
-      if(!JSON.parse(currentUser).completed_signup) 
-        location.href = "#create_account"
-      else if(!JSON.parse(currentUser).address_verified) 
-        location.href = "#verification"
-      else 
-        location.href = "#"             // Feed
-    } else {
-      
-    }
+    check_fb_auth()
   },
   
   render: function(){

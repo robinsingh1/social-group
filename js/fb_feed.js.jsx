@@ -1,8 +1,10 @@
 /** @jsx React.DOM */
 
-var ParseFeed = React.createClass({
+var FacebookFeed = React.createClass({
   getInitialState: function(){
-    return {posts: [] }
+    return {posts: [],
+            next: "",
+    }
   },
 
   componentDidMount: function() {
@@ -10,21 +12,24 @@ var ParseFeed = React.createClass({
     localStorage.currentPage = 0
     localStorage.loadedAllPosts = false
 
-    $(document).scroll(function() {
-      if($(window).scrollTop() == $(document).height() - $(window).height()) {
-        if(!eval(localStorage.loadedAllPosts)){
-          //console.log('load more stuff')
-          thiss.loadMoreParseItems()
-          $('#the_progress_bar').show()
-        }
-      }
-    });
 
     first_key = "aIHDo506A6fdlZ7YZB6n93EZQeBvV8wBFsArgIYB"
     second_key = "wWQnUcWjA7ARW2s5n6zSfv52ypp1d7PmyMSoLxDh"
     Parse.initialize(first_key, second_key)
+    //console.log('did mount')
+    this.getFacebookPosts()
+    /*
+    $(document).scroll(function() {
+      if($(window).scrollTop() == $(document).height() - $(window).height()) {
+        console.log('load more stuff')
+        thiss.loadMoreItems()
+        $('#the_progress_bar').show()
+      }
+    });
+    */
   },
 
+  /*
   loadMoreParseItems: function(paging_url){
     thiss = this;
     currentPage = localStorage.currentPage + 1
@@ -49,34 +54,34 @@ var ParseFeed = React.createClass({
       thiss.setState({posts: thiss.state.posts.concat(lol.results) })
     })
   },
+  */
 
+  /*
   componentWillReceiveProps: function(){
     currentUserId = localStorage.currentUserId
     currentNeighborhood = localStorage.currentNeighborhood
 
     thiss = this;
     currentPage = localStorage.currentPage
-    $.ajax({
-      url: "https://api.parse.com/1/classes/Post?limit=20&skip="+currentPage*20+"&include=user,comments,users_who_commented",
-      headers : {
-        "X-Parse-Application-Id" : "jF3MjzUKzF0ag0b0m821ZCqfuQVIwMhI160QQRog",
-        "X-Parse-REST-API-Key"   : "HqGVm1hoPxJNxIx7T3RGwvGiTz7mfpJKHbz9EBuE",
-      },
-      data:'where={"neighborhood": {"__type":"Pointer","objectId":"'+currentNeighborhood+'","className":"Neighborhood"}}&order=-post_created_at_timestamp',
-      success: function(lol) {
-        thiss.setState({ posts : lol.results })
-      }
-    })
+    console.log('will recieve props')
+    this.getFacebookPosts()
   },
+  */
 
   render: function(){
     the_posts = []
     profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
+/*
     for(i=0;i<this.state.posts.length;i++){
       the_posts.push(<ParsePost  post={this.state.posts[i]} 
                                  fb_profile_pic={profile_pic}
                                  key={this.state.posts[i].objectId} 
                                  tags={this.state.posts[i].tags} />)
+    }
+*/
+    for(i=0;i<this.state.posts.length;i++){
+      the_posts.push(<FacebookPost post={this.state.posts[i]} 
+                       key={this.state.posts[i].objectId} />)
     }
 
     return (
@@ -85,14 +90,6 @@ var ParseFeed = React.createClass({
         {the_posts}
       </div>
     )
-    /*  
-     *  Facebook Posts
-        for(i=0;i<this.state.posts.length;i++){
-          posts.push(<FacebookPost post={this.state.posts[i]} 
-                           fb_profile_pic={this.state.profile_pics[i]}
-                           key={this.state.posts[i].objectId} />)
-        }
-    */
   },
 
   createPost: function(body, tag){
@@ -113,27 +110,30 @@ var ParseFeed = React.createClass({
   },
 
 
-/*
-  loadMoreItems: function(paging_url){
+  loadMoreItems: function(){
     thiss = this;
-    $.ajax({ url: paging_url })
-    .success(function(the_lol) {
-      lol = the_lol
+    console.log(this.state.next)
+    $.ajax({ 
+      url: this.state.next,
+      success: function(lol) {
       profile_pic = "http://www.faithlineprotestants.org/wp-content/uploads/2010/12/facebook-default-no-profile-pic.jpg"
       profile_pics = []
       for(i=0;i<lol.data.length;i++){ profile_pics.push(profile_pic) }
-
       thiss.setState({posts: thiss.state.posts.concat(lol.data), 
                       profile_pics: profile_pics, 
                       next: lol.paging.next})
       $('#the_progress_bar').hide()
       localStorage.loaded = true
+      },
+      error: function(error) {
+        console.log(error)
+      }
     })
   },
 
 
   getFacebookPosts: function(){
-    access_token = "CAACEdEose0cBAE9aGl5eAZCNequsFg1y85o2ZBY0fgt1MU4qOQdc2Ax2g7MjRZAAZCB8hFOdKw3k4Lumyn2c7yK6sQLZBO3bDjxuexnAipOyAfCvMo5dh9nuEm3sDkQGdURI15We5ZBaU4sTFgOLGowIJvxjZB0cXopZCA2Ii15imHx2Dw98KNwLg2cNpwa59rwhAXVlaVkaiAZDZD"
+    access_token = "CAACEdEose0cBAJfOnnJfHZAak42a2ZA09J1QQib5E07PZCvoJCb3ZBQiGwaQReOUEDlpIP5CLUBJKhUsZARHTv7Eusd1MrDT8rkKgH6eiOneevZAZARyylS7DLzIflebMmNNcAG7zyOtHLLQWXZCTZCfc25xFpxHzHC0ptaePTxCffMT0FYpP3PY8D1QgbW6ySm5yPupfjCkt0wZDZD"
     $.ajax({
       url: "https://graph.facebook.com/595943383784905/feed?access_token="+access_token
     }).success(function(lol) {
@@ -141,8 +141,8 @@ var ParseFeed = React.createClass({
       profile_pics = []
       for(i=0;i<lol.data.length;i++){ profile_pics.push(profile_pic) }
 
+      console.log(lol)
       thiss.setState({posts: lol.data, 
-                      profile_pics: profile_pics, 
                       next: lol.paging.next })
 
       profile_pics = []
@@ -161,9 +161,17 @@ var ParseFeed = React.createClass({
       }
     }).then(function(){
       console.log(profile_pics)
+      $(document).scroll(function() {
+        if($(window).scrollTop() == $(document).height() - $(window).height()) {
+          console.log('load more stuff')
+          thiss.loadMoreItems()
+          $('#the_progress_bar').show()
+        }
+      });
     });
   },
 
+/*
   beginningStyle: function() {
     $('.navbar-toggle').css('width','40px')
     $('.navbar-toggle').css('height','40px')
@@ -209,6 +217,7 @@ var createPost = React.createClass({
   },
   componentDidMount: function(){
     //console.log($(this.getDOMNode()).find('input'))
+    
   },
 
   fetch: function(){

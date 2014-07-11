@@ -35,9 +35,10 @@ var NavBar = React.createClass({
     // --------
     // Show neighborhoods that a user is a part of
     // 
+    menuIcon = (this.props.screen == "mobile") ? <i className="fa fa-bars" style={{fontSize:'30px',color:'white'}}/> : ""
     return (
       <div>
-        <nav className="navbar navbar-default navbar-fixed-top" role="navigation" style={{'backgroundColor':'#5cb85c',border:'0',borderRadius:'0'}}>
+        <nav id="navbar" className="navbar navbar-default navbar-fixed-top" role="navigation" style={{'backgroundColor':'#5cb85c',border:'0',borderRadius:'0'}}>
         <div className="container-fluid">
         <div className="navbar-header" style={{marginTop:'-4px'}}>
         <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -46,12 +47,12 @@ var NavBar = React.createClass({
           <span className="icon-bar"></span>
           <span className="icon-bar"></span>
         </button>
+        <a href="#" onClick={this.props.toggleMenu} style={{float:'left',marginTop:'15px',marginLeft:'12px'}}>{menuIcon}</a>
         <a className="navbar-brand" href="#" style={{color:'#306d30'}}>
           <span style={{fontSize:'30px'}}>
           <i className="fa fa-home"/>
           <span style={{fontFamily:'museo-sans-rounded',marginLeft:'7px'}}>NeighborsCircle</span>
           </span>
-          
         </a>
         </div>
 

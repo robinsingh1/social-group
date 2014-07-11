@@ -120,7 +120,7 @@ var Comment = React.createClass({
     if(comment.user_likes.length > 0)
       likes = <span><i className="fa fa-thumbs-up"/>{" "+comment.user_likes.length}</span>
     
-    console.log(comment)
+    //console.log(comment)
     return (
         <li className="list-group-item" style={commentStyle}>
           <div className="media" >
