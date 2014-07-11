@@ -84,7 +84,7 @@ var FacebookPost = React.createClass({
                       author={post.from.name} 
                       pic={profile_pic}/>
           <PostBody body={post.message} 
-                    image={this.props.fb_profile_pic} 
+                    image={post.picture} 
                     postComment={this.postComment}
                     postLike={this.postLike}/>
           <ul className="list-group">
@@ -189,7 +189,7 @@ var PostAuthor = React.createClass({
 var PostBody = React.createClass({
   render: function(){
     image = this.props.image
-
+    console.log(image)
   /*
     if(image.length == 0)
       the_image = ""
@@ -206,7 +206,9 @@ var PostBody = React.createClass({
   */
     return (
         <div className="panel-body" style={{paddingBottom:'10px'}}>
-        <a href="http://www.facebook.com" style={{textDecoration:'none',color:'black'}}>{this.props.body}</a>
+        {this.props.body}
+        <br/>
+        {(this.props.image) ? <img src={this.props.image} style={{width:'100%'}}/> : ""} 
         <div style={{paddingTop:'10px'}}>
         <a href="#" style={{fontSize:'12px'}} onClick={this.postLike}>Like</a>
         &nbsp;
